@@ -1,0 +1,98 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: ocr-lab
+  name: ocr-lab
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: ocr-lab
+        app.kubernetes.io/name: ocr-lab
+    spec:
+      automountServiceAccountToken: false
+      volumes:
+      - name: ocr-lab-vol
+        persistentVolumeClaim:
+          claimName: ocr-lab-pvc
+      containers:
+      - image: jupyter/datascience-notebook:e255f1aa00b2
+        volumeMounts:
+        - mountPath: "/home/jovyan/work"
+          name: ocr-lab-vol
+        name: ocr-lab
+        resources: {}
+        securityContext:
+          runAsUser: 0
+        args:
+          - sh
+          - -c
+          - |
+            start-notebook.sh --NotebookApp.base_url=/ocr-lab --NotebookApp.password='$(PASSWORD)'
+        env:
+          - name: JUPYTER_ENABLE_LAB
+            value: 'yes'
+          - name: GRANT_SUDO
+            value: 'yes'
+          - name: PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: ocr-lab
+                key: password
+      restartPolicy: Always
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: ocr-lab
+  annotations:
+    app.kubernetes.io/name: ocr-lab
+spec:
+  selector:
+    app.kubernetes.io/name: ocr-lab
+  ports:
+    - protocol: TCP
+      port: 8888
+      targetPort: 8888
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ocr-lab
+  annotations:
+    app.kubernetes.io/name: ocr-lab
+    ingress.kubernetes.io/ssl-redirect: "true"
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/proxy-body-size: 10m
+    #    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  rules:
+  - host: 'api.staging.eyrabenchmark.net'
+    http:
+      paths:
+      - path: /ocr-lab
+        backend:
+          serviceName: ocr-lab
+          servicePort: 8888
+
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ocr-lab-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 100Gi

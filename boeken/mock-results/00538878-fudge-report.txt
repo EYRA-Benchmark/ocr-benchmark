@@ -1,0 +1,114 @@
+- Changed the ReadingOrder
+  - Switched regionRef 25 and 17
+
+- Changed TextRegion r7
+  - Changed Coords Points with indexes 1&2 to x=507
+
+- Changed TextRegion r9
+  - Changed "En was onderteekend door alle de Gecon‑
+itueerdens en Gecommitteerdens." to "En was ondertekend door alle de Gecon‑
+itueerdens en Gecommitteerden."
+
+- Changed TextRegion r9
+  - Changed <Coords> from
+                <Point x="1447" y="362"/>
+                <Point x="1447" y="435"/>
+                <Point x="1304" y="435"/>
+                <Point x="1304" y="436"/>
+                <Point x="1150" y="436"/>
+                <Point x="1150" y="437"/>
+                <Point x="996" y="437"/>
+                <Point x="996" y="438"/>
+                <Point x="842" y="438"/>
+                <Point x="842" y="439"/>
+                <Point x="687" y="439"/>
+                <Point x="687" y="440"/>
+                <Point x="685" y="440"/>
+                <Point x="685" y="441"/>
+                <Point x="683" y="441"/>
+                <Point x="683" y="442"/>
+                <Point x="681" y="442"/>
+                <Point x="681" y="443"/>
+                <Point x="679" y="443"/>
+                <Point x="679" y="444"/>
+                <Point x="676" y="444"/>
+                <Point x="676" y="445"/>
+                <Point x="674" y="445"/>
+                <Point x="674" y="446"/>
+                <Point x="672" y="446"/>
+                <Point x="672" y="447"/>
+                <Point x="670" y="447"/>
+                <Point x="670" y="448"/>
+                <Point x="668" y="448"/>
+                <Point x="668" y="449"/>
+                <Point x="665" y="449"/>
+                <Point x="665" y="450"/>
+                <Point x="663" y="450"/>
+                <Point x="663" y="451"/>
+                <Point x="661" y="451"/>
+                <Point x="661" y="452"/>
+                <Point x="659" y="452"/>
+                <Point x="659" y="453"/>
+                <Point x="657" y="453"/>
+                <Point x="657" y="455"/>
+                <Point x="605" y="455"/>
+                <Point x="604" y="454"/>
+                <Point x="604" y="452"/>
+                <Point x="603" y="452"/>
+                <Point x="603" y="451"/>
+                <Point x="602" y="451"/>
+                <Point x="602" y="450"/>
+                <Point x="601" y="450"/>
+                <Point x="601" y="449"/>
+                <Point x="600" y="449"/>
+                <Point x="600" y="448"/>
+                <Point x="597" y="448"/>
+                <Point x="597" y="449"/>
+                <Point x="550" y="449"/>
+                <Point x="550" y="450"/>
+                <Point x="503" y="450"/>
+                <Point x="503" y="451"/>
+                <Point x="502" y="451"/>
+                <Point x="502" y="452"/>
+                <Point x="501" y="452"/>
+                <Point x="501" y="453"/>
+                <Point x="500" y="453"/>
+                <Point x="500" y="454"/>
+                <Point x="498" y="454"/>
+                <Point x="498" y="455"/>
+                <Point x="497" y="455"/>
+                <Point x="497" y="456"/>
+                <Point x="496" y="456"/>
+                <Point x="496" y="457"/>
+                <Point x="495" y="457"/>
+                <Point x="495" y="458"/>
+                <Point x="493" y="458"/>
+                <Point x="493" y="459"/>
+                <Point x="492" y="459"/>
+                <Point x="492" y="460"/>
+                <Point x="491" y="460"/>
+                <Point x="491" y="461"/>
+                <Point x="490" y="461"/>
+                <Point x="490" y="462"/>
+                <Point x="488" y="462"/>
+                <Point x="488" y="463"/>
+                <Point x="425" y="463"/>
+                <Point x="425" y="362"/>
+            </Coords>
+to 
+	    <Coords>
+		<Point x="425" y="362"/>                
+		<Point x="425" y="463"/>                
+                <Point x="1447" y=""/>
+                <Point x="1447" y="463"/>
+            </Coords>
+
+- Cut TextRegion r10 into two parts
+
+- Added TextRegion 'fake'
+
+- Removed TextRegion r11
+
+- Changed TextRegion r17
+  - removed from the middle of the text:
+	"vertegenwoordiging op den I9 en 20 December I785 hebben in confesſo geeld, „ even of aan het „ verzoek en 't daar by gedaane voorel ter op‑ „ gegeeven afvraagingen punueelyk was voldaan"

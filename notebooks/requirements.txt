@@ -1,0 +1,6 @@
+git+https://github.com/eyra-benchmark/page_xml_gen
+lxml
+Pillow
+numpy
+pandas
+matplotlib

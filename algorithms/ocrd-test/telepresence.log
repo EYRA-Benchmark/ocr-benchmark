@@ -1,0 +1,425 @@
+   0.0 TEL | Telepresence 0.100 launched at Fri Mar  6 16:57:41 2020
+   0.0 TEL |   /usr/bin/telepresence --namespace eyra-prd --swap-deployment eyra-prd-web --expose 8000 --run zsh
+   0.0 TEL | Platform: linux
+   0.0 TEL | Python 3.7.3 (default, Mar 27 2019, 22:11:17)
+   0.0 TEL | [GCC 7.3.0]
+   0.0 TEL | [1] Running: uname -a
+   0.0   1 | Linux ESLT0073 5.3.0-3-amd64 #1 SMP Debian 5.3.15-1 (2019-12-07) x86_64 GNU/Linux
+   0.0 TEL | [1] ran in 0.00 secs.
+   0.0 TEL | BEGIN SPAN main.py:40(main)
+   0.0 TEL | BEGIN SPAN startup.py:74(__init__)
+   0.0 TEL | Found kubectl -> /home/tom/.local/bin/kubectl
+   0.0 TEL | [2] Capturing: kubectl version --short
+   0.5 TEL | [2] captured in 0.49 secs.
+   0.5 TEL | [3] Capturing: kubectl config current-context
+   0.6 TEL | [3] captured in 0.06 secs.
+   0.6 TEL | [4] Capturing: kubectl config view -o json
+   0.6 TEL | [4] captured in 0.04 secs.
+   0.6 TEL | [5] Capturing: kubectl --context aws get ns eyra-prd
+   1.0 TEL | [5] captured in 0.42 secs.
+   1.0 TEL | Command: kubectl 1.13.5
+   1.0 TEL | Context: aws, namespace: eyra-prd, version: 1.12.10-eks-aae39f
+   1.0 TEL | END SPAN startup.py:74(__init__)    1.0s
+   1.0 TEL | Found ssh -> /usr/bin/ssh
+   1.0 TEL | [6] Capturing: ssh -V
+   1.0 TEL | [6] captured in 0.00 secs.
+   1.0 TEL | Found zsh -> /usr/bin/zsh
+   1.0 TEL | Found sshuttle-telepresence -> /usr/libexec/sshuttle-telepresence
+   1.0 TEL | Found conntrack -> /usr/sbin/conntrack
+   1.0 TEL | Found iptables -> /usr/sbin/iptables
+   1.0 TEL | Found sudo -> /usr/bin/sudo
+   1.0 TEL | [7] Running: sudo -n echo -n
+   1.0   7 | sudo: a password is required
+   1.0 TEL | [7] exit 1 in 0.01 secs.
+   1.0 >>> | How Telepresence uses sudo: https://www.telepresence.io/reference/install#dependencies
+   1.0 >>> | Invoking sudo. Please enter your sudo password.
+   1.0 TEL | [8] Running: sudo echo -n
+   3.5 TEL | [8] ran in 2.46 secs.
+   3.5 >>> | Starting proxy with method 'vpn-tcp', which has the following limitations: All processes are affected, only one telepresence can run per machine, and you can't use other VPNs. You may need to add cloud hosts and headless services with --also-proxy. For a full list of method limitations see https://telepresence.io/reference/methods.html
+   3.5 TEL | Found sshfs -> /usr/bin/sshfs
+   3.5 TEL | Found fusermount -> /bin/fusermount
+   3.5 >>> | Volumes are rooted at $TELEPRESENCE_ROOT. See https://telepresence.io/howto/volumes.html for details.
+   3.5 TEL | [9] Running: kubectl --context aws --namespace eyra-prd get pods telepresence-connectivity-check --ignore-not-found
+   3.8 TEL | [9] ran in 0.33 secs.
+   4.2 TEL | Scout info: {'latest_version': '0.104', 'application': 'telepresence', 'notices': []}
+   4.2 TEL | BEGIN SPAN deployment.py:179(supplant_deployment)
+   4.2 >>> | Starting network proxy to cluster by swapping out Deployment eyra-prd-web with a proxy
+   4.2 TEL | BEGIN SPAN remote.py:78(get_deployment_json)
+   4.2 TEL | [10] Capturing: kubectl --context aws --namespace eyra-prd get deployment -o json eyra-prd-web
+   4.6 TEL | [10] captured in 0.33 secs.
+   4.6 TEL | END SPAN remote.py:78(get_deployment_json)    0.3s
+   4.6 TEL | [11] Running: kubectl --context aws --namespace eyra-prd delete deployment eyra-prd-web-bb52fab147d9474dab6438f05018dbaa --ignore-not-found
+   4.8 TEL | [11] ran in 0.28 secs.
+   4.8 TEL | [12] Running: kubectl --context aws --namespace eyra-prd apply -f -
+   5.2  12 | deployment.extensions/eyra-prd-web-bb52fab147d9474dab6438f05018dbaa created
+   5.2 TEL | [12] ran in 0.36 secs.
+   5.2 TEL | [13] Running: kubectl --context aws --namespace eyra-prd scale deployment eyra-prd-web --replicas=0
+   5.9  13 | deployment.extensions/eyra-prd-web scaled
+   5.9 TEL | [13] ran in 0.73 secs.
+   5.9 TEL | END SPAN deployment.py:179(supplant_deployment)    1.7s
+   5.9 TEL | BEGIN SPAN remote.py:151(get_remote_info)
+   5.9 TEL | BEGIN SPAN remote.py:78(get_deployment_json)
+   5.9 TEL | [14] Capturing: kubectl --context aws --namespace eyra-prd get deployment -o json --selector=telepresence=bb52fab147d9474dab6438f05018dbaa
+   6.2 TEL | [14] captured in 0.31 secs.
+   6.2 TEL | END SPAN remote.py:78(get_deployment_json)    0.3s
+   6.2 TEL | Searching for Telepresence pod:
+   6.2 TEL |   with name eyra-prd-web-bb52fab147d9474dab6438f05018dbaa-*
+   6.2 TEL |   with labels {'app': 'web', 'app.kubernetes.io/name': 'eyra-prd-web', 'telepresence': 'bb52fab147d9474dab6438f05018dbaa'}
+   6.2 TEL | [15] Capturing: kubectl --context aws --namespace eyra-prd get pod -o json --selector=telepresence=bb52fab147d9474dab6438f05018dbaa
+   6.6 TEL | [15] captured in 0.39 secs.
+   6.6 TEL | Checking eyra-prd-web-bb52fab147d9474dab6438f05018dbaa-5f6cc6b67d-qlvc7
+   6.6 TEL | Looks like we've found our pod!
+   6.6 TEL | BEGIN SPAN remote.py:113(wait_for_pod)
+   6.6 TEL | [16] Capturing: kubectl --context aws --namespace eyra-prd get pod eyra-prd-web-bb52fab147d9474dab6438f05018dbaa-5f6cc6b67d-qlvc7 -o json
+   6.8 TEL | [16] captured in 0.22 secs.
+   7.1 TEL | [17] Capturing: kubectl --context aws --namespace eyra-prd get pod eyra-prd-web-bb52fab147d9474dab6438f05018dbaa-5f6cc6b67d-qlvc7 -o json
+   7.5 TEL | [17] captured in 0.42 secs.
+   7.8 TEL | [18] Capturing: kubectl --context aws --namespace eyra-prd get pod eyra-prd-web-bb52fab147d9474dab6438f05018dbaa-5f6cc6b67d-qlvc7 -o json
+   8.1 TEL | [18] captured in 0.28 secs.
+   8.3 TEL | [19] Capturing: kubectl --context aws --namespace eyra-prd get pod eyra-prd-web-bb52fab147d9474dab6438f05018dbaa-5f6cc6b67d-qlvc7 -o json
+   8.7 TEL | [19] captured in 0.41 secs.
+   9.0 TEL | [20] Capturing: kubectl --context aws --namespace eyra-prd get pod eyra-prd-web-bb52fab147d9474dab6438f05018dbaa-5f6cc6b67d-qlvc7 -o json
+   9.4 TEL | [20] captured in 0.45 secs.
+   9.7 TEL | [21] Capturing: kubectl --context aws --namespace eyra-prd get pod eyra-prd-web-bb52fab147d9474dab6438f05018dbaa-5f6cc6b67d-qlvc7 -o json
+   9.9 TEL | [21] captured in 0.26 secs.
+  10.2 TEL | [22] Capturing: kubectl --context aws --namespace eyra-prd get pod eyra-prd-web-bb52fab147d9474dab6438f05018dbaa-5f6cc6b67d-qlvc7 -o json
+  10.5 TEL | [22] captured in 0.33 secs.
+  10.8 TEL | [23] Capturing: kubectl --context aws --namespace eyra-prd get pod eyra-prd-web-bb52fab147d9474dab6438f05018dbaa-5f6cc6b67d-qlvc7 -o json
+  11.1 TEL | [23] captured in 0.38 secs.
+  11.1 TEL | END SPAN remote.py:113(wait_for_pod)    4.5s
+  11.1 TEL | END SPAN remote.py:151(get_remote_info)    5.2s
+  11.1 TEL | BEGIN SPAN connect.py:36(connect)
+  11.1 TEL | [24] Launching kubectl logs: kubectl --context aws --namespace eyra-prd logs -f eyra-prd-web-bb52fab147d9474dab6438f05018dbaa-5f6cc6b67d-qlvc7 --container web --tail=10
+  11.2 TEL | [25] Launching kubectl port-forward: kubectl --context aws --namespace eyra-prd port-forward eyra-prd-web-bb52fab147d9474dab6438f05018dbaa-5f6cc6b67d-qlvc7 45875:8022
+  11.2 TEL | [26] Running: ssh -F /dev/null -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -q -p 45875 telepresence@127.0.0.1 /bin/true
+  11.2 TEL | [26] exit 255 in 0.01 secs.
+  11.4 TEL | [27] Running: ssh -F /dev/null -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -q -p 45875 telepresence@127.0.0.1 /bin/true
+  11.4 TEL | [27] exit 255 in 0.02 secs.
+  11.7 TEL | [28] Running: ssh -F /dev/null -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -q -p 45875 telepresence@127.0.0.1 /bin/true
+  11.7 TEL | [28] exit 255 in 0.01 secs.
+  11.9 TEL | [29] Running: ssh -F /dev/null -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -q -p 45875 telepresence@127.0.0.1 /bin/true
+  12.0 TEL | [29] exit 255 in 0.01 secs.
+  12.0  25 | Forwarding from 127.0.0.1:45875 -> 8022
+  12.0  25 | Forwarding from [::1]:45875 -> 8022
+  12.2 TEL | [30] Running: ssh -F /dev/null -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -q -p 45875 telepresence@127.0.0.1 /bin/true
+  12.2  25 | Handling connection for 45875
+  12.7 TEL | [30] ran in 0.49 secs.
+  12.7 >>> | Forwarding remote port 8000 to local port 8000.
+  12.7 TEL | [31] Launching SSH port forward (exposed ports): ssh -N -oServerAliveInterval=1 -oServerAliveCountMax=10 -F /dev/null -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -q -p 45875 telepresence@127.0.0.1 -R '*:8000:127.0.0.1:8000'
+  12.7 >>> | 
+  12.7 TEL | Launching Web server for proxy poll
+  12.7 TEL | [32] Launching SSH port forward (socks and proxy poll): ssh -N -oServerAliveInterval=1 -oServerAliveCountMax=10 -F /dev/null -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -q -p 45875 telepresence@127.0.0.1 -L127.0.0.1:43495:127.0.0.1:9050 -R9055:127.0.0.1:41367
+  12.7 TEL | END SPAN connect.py:36(connect)    1.6s
+  12.7  25 | Handling connection for 45875
+  12.7 TEL | BEGIN SPAN remote_env.py:28(get_remote_env)
+  12.7 TEL | [33] Capturing: kubectl --context aws --namespace eyra-prd exec eyra-prd-web-bb52fab147d9474dab6438f05018dbaa-5f6cc6b67d-qlvc7 --container web -- python3 podinfo.py
+  12.7  25 | Handling connection for 45875
+  14.4 TEL | [33] captured in 1.71 secs.
+  14.4 TEL | END SPAN remote_env.py:28(get_remote_env)    1.7s
+  14.4 TEL | BEGIN SPAN mount.py:32(mount_remote_volumes)
+  14.4 TEL | [34] Running: sshfs -p 45875 -F /dev/null -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null telepresence@127.0.0.1:/ /tmp/tel-u6ue04ni/fs
+  14.4  25 | Handling connection for 45875
+  15.3 TEL | [34] ran in 0.85 secs.
+  15.3 TEL | END SPAN mount.py:32(mount_remote_volumes)    0.8s
+  15.3 TEL | BEGIN SPAN vpn.py:264(connect_sshuttle)
+  15.3 TEL | BEGIN SPAN vpn.py:74(get_proxy_cidrs)
+  15.3 TEL | END SPAN vpn.py:74(get_proxy_cidrs)    0.0s
+  15.3 TEL | [35] Launching sshuttle: sshuttle-telepresence -v --dns --method nat -e 'ssh -F /dev/null -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null' -r telepresence@127.0.0.1:45875 --to-ns 127.0.0.1:9053 172.20.0.0/16
+  15.3 TEL | BEGIN SPAN vpn.py:287(connect_sshuttle,sshuttle-wait)
+  15.3 TEL | Wait for vpn-tcp connection: hellotelepresence-0
+  15.3 TEL | [36] Capturing: python3 -c 'import socket; socket.gethostbyname("hellotelepresence-0")'
+  15.3 TEL | [36] exit 1 in 0.07 secs.
+  15.3 TEL | [37] Capturing: python3 -c 'import socket; socket.gethostbyname("hellotelepresence-0.a.sanity.check.telepresence.io")'
+  15.4 TEL | [37] exit 1 in 0.07 secs.
+  15.5 TEL | Wait for vpn-tcp connection: hellotelepresence-1
+  15.5 TEL | [38] Capturing: python3 -c 'import socket; socket.gethostbyname("hellotelepresence-1")'
+  15.5 TEL | [38] exit 1 in 0.03 secs.
+  15.5 TEL | [39] Capturing: python3 -c 'import socket; socket.gethostbyname("hellotelepresence-1.a.sanity.check.telepresence.io")'
+  15.6  35 | Starting sshuttle proxy.
+  15.6 TEL | [39] exit 1 in 0.07 secs.
+  15.7 TEL | Wait for vpn-tcp connection: hellotelepresence-2
+  15.7 TEL | [40] Capturing: python3 -c 'import socket; socket.gethostbyname("hellotelepresence-2")'
+  15.7 TEL | [40] exit 1 in 0.03 secs.
+  15.7 TEL | [41] Capturing: python3 -c 'import socket; socket.gethostbyname("hellotelepresence-2.a.sanity.check.telepresence.io")'
+  15.8 TEL | [41] exit 1 in 0.07 secs.
+  15.9 TEL | Wait for vpn-tcp connection: hellotelepresence-3
+  15.9 TEL | [42] Capturing: python3 -c 'import socket; socket.gethostbyname("hellotelepresence-3")'
+  15.9  35 | firewall manager: Starting firewall with Python version 3.7.3
+  15.9  35 | firewall manager: ready method name nat.
+  15.9  35 | IPv6 enabled: False
+  15.9  35 | UDP enabled: False
+  15.9  35 | DNS enabled: True
+  15.9  35 | TCP redirector listening on ('127.0.0.1', 12300).
+  15.9  35 | DNS listening on ('127.0.0.1', 12300).
+  15.9  35 | Starting client with Python version 3.7.3
+  15.9  35 | c : connecting to server...
+  15.9  25 | Handling connection for 45875
+  15.9 TEL | [42] exit 1 in 0.03 secs.
+  15.9 TEL | [43] Capturing: python3 -c 'import socket; socket.gethostbyname("hellotelepresence-3.a.sanity.check.telepresence.io")'
+  16.0 TEL | [43] exit 1 in 0.07 secs.
+  16.1 TEL | Wait for vpn-tcp connection: hellotelepresence-4
+  16.1 TEL | [44] Capturing: python3 -c 'import socket; socket.gethostbyname("hellotelepresence-4")'
+  16.2 TEL | [44] exit 1 in 0.12 secs.
+  16.2 TEL | [45] Capturing: python3 -c 'import socket; socket.gethostbyname("hellotelepresence-4.a.sanity.check.telepresence.io")'
+  16.3 TEL | [45] exit 1 in 0.07 secs.
+  16.4 TEL | Wait for vpn-tcp connection: hellotelepresence-5
+  16.4 TEL | [46] Capturing: python3 -c 'import socket; socket.gethostbyname("hellotelepresence-5")'
+  16.4  35 | Warning: Permanently added '[127.0.0.1]:45875' (ECDSA) to the list of known hosts.
+  16.4 TEL | [46] exit 1 in 0.04 secs.
+  16.4 TEL | [47] Capturing: python3 -c 'import socket; socket.gethostbyname("hellotelepresence-5.a.sanity.check.telepresence.io")'
+  16.5 TEL | [47] exit 1 in 0.07 secs.
+  16.6 TEL | Wait for vpn-tcp connection: hellotelepresence-6
+  16.6 TEL | [48] Capturing: python3 -c 'import socket; socket.gethostbyname("hellotelepresence-6")'
+  16.7 TEL | [48] exit 1 in 0.12 secs.
+  16.7 TEL | [49] Capturing: python3 -c 'import socket; socket.gethostbyname("hellotelepresence-6.a.sanity.check.telepresence.io")'
+  16.8 TEL | [49] exit 1 in 0.07 secs.
+  16.9 TEL | Wait for vpn-tcp connection: hellotelepresence-7
+  16.9 TEL | [50] Capturing: python3 -c 'import socket; socket.gethostbyname("hellotelepresence-7")'
+  17.0 TEL | [50] exit 1 in 0.07 secs.
+  17.0 TEL | [51] Capturing: python3 -c 'import socket; socket.gethostbyname("hellotelepresence-7.a.sanity.check.telepresence.io")'
+  17.0 TEL | [51] exit 1 in 0.07 secs.
+  17.1 TEL | Wait for vpn-tcp connection: hellotelepresence-8
+  17.1 TEL | [52] Capturing: python3 -c 'import socket; socket.gethostbyname("hellotelepresence-8")'
+  17.2 TEL | [52] exit 1 in 0.12 secs.
+  17.2 TEL | [53] Capturing: python3 -c 'import socket; socket.gethostbyname("hellotelepresence-8.a.sanity.check.telepresence.io")'
+  17.3 TEL | [53] exit 1 in 0.07 secs.
+  17.4 TEL | Wait for vpn-tcp connection: hellotelepresence-9
+  17.4 TEL | [54] Capturing: python3 -c 'import socket; socket.gethostbyname("hellotelepresence-9")'
+  17.4 TEL | [54] exit 1 in 0.04 secs.
+  17.4 TEL | [55] Capturing: python3 -c 'import socket; socket.gethostbyname("hellotelepresence-9.a.sanity.check.telepresence.io")'
+  17.5 TEL | [55] exit 1 in 0.03 secs.
+  17.6 TEL | Wait for vpn-tcp connection: hellotelepresence-10
+  17.6 TEL | [56] Capturing: python3 -c 'import socket; socket.gethostbyname("hellotelepresence-10")'
+  17.6 TEL | [56] exit 1 in 0.07 secs.
+  17.6 TEL | [57] Capturing: python3 -c 'import socket; socket.gethostbyname("hellotelepresence-10.a.sanity.check.telepresence.io")'
+  17.7  35 | Starting server with Python version 3.6.8
+  17.7  35 |  s: latency control setting = True
+  17.7 TEL | [57] exit 1 in 0.03 secs.
+  17.8  35 |  s: available routes:
+  17.8  35 | c : Connected.
+  17.8  35 | firewall manager: setting up.
+  17.8  35 | >> iptables -t nat -N sshuttle-12300
+  17.8  35 | >> iptables -t nat -F sshuttle-12300
+  17.8  35 | >> iptables -t nat -I OUTPUT 1 -j sshuttle-12300
+  17.8 TEL | Wait for vpn-tcp connection: hellotelepresence-11
+  17.8 TEL | [58] Capturing: python3 -c 'import socket; socket.gethostbyname("hellotelepresence-11")'
+  17.8  35 | >> iptables -t nat -I PREROUTING 1 -j sshuttle-12300
+  17.8  35 | >> iptables -t nat -A sshuttle-12300 -j RETURN --dest 127.0.0.1/32 -p tcp
+  17.8  35 | >> iptables -t nat -A sshuttle-12300 -j REDIRECT --dest 172.20.0.0/16 -p tcp --to-ports 12300 -m ttl ! --ttl 42
+  17.8  35 | >> iptables -t nat -A sshuttle-12300 -j REDIRECT --dest 192.168.93.1/32 -p udp --dport 53 --to-ports 12300 -m ttl ! --ttl 42
+  17.8  35 | >> iptables -t nat -A sshuttle-12300 -j REDIRECT --dest 94.247.73.1/32 -p udp --dport 53 --to-ports 12300 -m ttl ! --ttl 42
+  17.8  35 | >> iptables -t nat -A sshuttle-12300 -j REDIRECT --dest 94.247.75.1/32 -p udp --dport 53 --to-ports 12300 -m ttl ! --ttl 42
+  17.8  35 | >> iptables -t nat -A sshuttle-12300 -j REDIRECT --dest 224.0.0.252/32 -p udp --dport 5355 --to-ports 12300 -m ttl ! --ttl 42
+  17.8  35 | conntrack v1.4.5 (conntrack-tools): 0 flow entries have been deleted.
+  17.8  35 | c : DNS request from ('192.168.93.249', 54351) to None: 38 bytes
+  22.7  24 | Listening...
+  22.7  24 | 2020-03-06T15:58:01+0000 [-] Loading ./forwarder.py...
+  22.7  24 | 2020-03-06T15:58:04+0000 [-] /etc/resolv.conf changed, reparsing
+  22.7  24 | 2020-03-06T15:58:04+0000 [-] Resolver added ('172.20.0.10', 53) to server list
+  22.7  24 | 2020-03-06T15:58:04+0000 [-] SOCKSv5Factory starting on 9050
+  22.7  24 | 2020-03-06T15:58:04+0000 [socks.SOCKSv5Factory#info] Starting factory <socks.SOCKSv5Factory object at 0x7fd4cd35c6a0>
+  22.7  24 | 2020-03-06T15:58:04+0000 [-] DNSDatagramProtocol starting on 9053
+  22.7  24 | 2020-03-06T15:58:04+0000 [-] Starting protocol <twisted.names.dns.DNSDatagramProtocol object at 0x7fd4cd35ca58>
+  22.7  24 | 2020-03-06T15:58:04+0000 [-] Loaded.
+  22.8  24 | 2020-03-06T15:58:04+0000 [twisted.scripts._twistd_unix.UnixAppLogger#info] twistd 19.2.1 (/usr/bin/python3.6 3.6.8) starting up.
+  22.8  24 | 2020-03-06T15:58:04+0000 [twisted.scripts._twistd_unix.UnixAppLogger#info] reactor class: twisted.internet.epollreactor.EPollReactor.
+  22.8 TEL | [58] timed out after 5.01 secs.
+  22.8 TEL | [59] Capturing: python3 -c 'import socket; socket.gethostbyname("hellotelepresence-11.a.sanity.check.telepresence.io")'
+  22.8  35 | c : DNS request from ('192.168.93.249', 45491) to None: 69 bytes
+  22.9  24 | 2020-03-06T15:58:04+0000 [stdout#info] Sanity check: b'hellotelepresence-11.a.sanity.check.telepresence.io'
+  22.9 TEL | [59] exit 1 in 0.12 secs.
+  23.0 TEL | Wait for vpn-tcp connection: hellotelepresence-12
+  23.0 TEL | [60] Capturing: python3 -c 'import socket; socket.gethostbyname("hellotelepresence-12")'
+  23.1  35 | c : DNS request from ('192.168.93.249', 57755) to None: 38 bytes
+  23.1  24 | 2020-03-06T15:58:05+0000 [stdout#info] Set DNS suffix we filter out to: [()]
+  23.1  24 | 2020-03-06T15:58:05+0000 [stdout#info] Result for b'hellotelepresence-12' is ['127.0.0.1']
+  23.2 TEL | [60] captured in 0.17 secs.
+  23.2 TEL | Resolved hellotelepresence-12. 2 more...
+  23.2 TEL | [61] Capturing: python3 -c 'import socket; socket.gethostbyname("hellotelepresence-12.a.sanity.check.telepresence.io")'
+  23.2  35 | c : DNS request from ('192.168.93.249', 35815) to None: 69 bytes
+  23.3  24 | 2020-03-06T15:58:05+0000 [stdout#info] Sanity check: b'hellotelepresence-12.a.sanity.check.telepresence.io'
+  23.3 TEL | [61] exit 1 in 0.12 secs.
+  23.4 TEL | Wait for vpn-tcp connection: hellotelepresence-13
+  23.4 TEL | [62] Capturing: python3 -c 'import socket; socket.gethostbyname("hellotelepresence-13")'
+  23.4  35 | c : DNS request from ('192.168.93.249', 49986) to None: 38 bytes
+  23.5  24 | 2020-03-06T15:58:05+0000 [stdout#info] Result for b'hellotelepresence-13' is ['127.0.0.1']
+  23.5 TEL | [62] captured in 0.12 secs.
+  23.5 TEL | Resolved hellotelepresence-13. 1 more...
+  23.5 TEL | [63] Capturing: python3 -c 'import socket; socket.gethostbyname("hellotelepresence-13.a.sanity.check.telepresence.io")'
+  23.6  35 | c : DNS request from ('192.168.93.249', 55873) to None: 69 bytes
+  23.6  24 | 2020-03-06T15:58:05+0000 [stdout#info] Sanity check: b'hellotelepresence-13.a.sanity.check.telepresence.io'
+  23.6 TEL | [63] exit 1 in 0.12 secs.
+  23.7 TEL | Wait for vpn-tcp connection: hellotelepresence-14
+  23.7 TEL | [64] Capturing: python3 -c 'import socket; socket.gethostbyname("hellotelepresence-14")'
+  23.8  35 | c : DNS request from ('192.168.93.249', 51630) to None: 38 bytes
+  23.8  24 | 2020-03-06T15:58:05+0000 [stdout#info] Result for b'hellotelepresence-14' is ['127.0.0.1']
+  23.9 TEL | [64] captured in 0.17 secs.
+  23.9 TEL | Resolved hellotelepresence-14. 0 more...
+  23.9 TEL | END SPAN vpn.py:287(connect_sshuttle,sshuttle-wait)    8.6s
+  23.9 TEL | END SPAN vpn.py:264(connect_sshuttle)    8.6s
+  23.9 >>> | Setup complete. Launching your command.
+  23.9 TEL | Everything launched. Waiting to exit...
+  23.9 TEL | BEGIN SPAN runner.py:682(wait_for_exit)
+  33.5 TEL | [65] Running: sudo -n echo -n
+  33.6 TEL | [65] ran in 0.03 secs.
+  42.6  35 | c : DNS request from ('192.168.93.249', 45393) to None: 35 bytes
+  42.6  24 | 2020-03-06T15:58:24+0000 [stdout#info] A query: b'www.jetbrains.com'
+  42.9  24 | 2020-03-06T15:58:24+0000 [stdout#info] Result for b'www.jetbrains.com' is ['34.251.128.46', '18.200.1.4']
+  43.2  35 | c : DNS request from ('192.168.93.249', 47122) to None: 43 bytes
+  43.2  24 | 2020-03-06T15:58:25+0000 [stdout#info] A query: b'cloudconfig.jetbrains.com'
+  43.4  24 | 2020-03-06T15:58:25+0000 [stdout#info] Result for b'cloudconfig.jetbrains.com' is ['54.194.40.217', '18.203.57.69']
+  43.8  35 | c : DNS request from ('192.168.93.249', 44454) to None: 39 bytes
+  43.8  24 | 2020-03-06T15:58:25+0000 [stdout#info] A query: b'plugins.jetbrains.com'
+  43.9  24 | 2020-03-06T15:58:25+0000 [stdout#info] Result for b'plugins.jetbrains.com' is ['99.86.3.23', '99.86.3.100', '99.86.3.83', '99.86.3.3']
+  52.2  35 | c : DNS request from ('192.168.93.249', 49003) to None: 46 bytes
+  52.3  24 | 2020-03-06T15:58:34+0000 [stdout#info] A query: b'eyra-prd-postgresql.eyra-prd'
+  52.3  24 | 2020-03-06T15:58:34+0000 [stdout#info] Result for b'eyra-prd-postgresql.eyra-prd' is ['172.20.253.94']
+  52.3  35 | c : Accept TCP: 192.168.93.249:60420 -> 172.20.253.94:5432.
+  52.8 TEL | (proxy checking local liveness)
+  52.8  24 | 2020-03-06T15:58:34+0000 [Poll#info] Checkpoint
+  56.8  35 | c : Accept TCP: 192.168.93.249:60472 -> 172.20.253.94:5432.
+  63.6 TEL | [66] Running: sudo -n echo -n
+  63.6 TEL | [66] ran in 0.01 secs.
+  70.0  35 | c : DNS request from ('192.168.93.249', 38031) to None: 33 bytes
+  70.0  24 | 2020-03-06T15:58:51+0000 [stdout#info] A query: b'live.github.com'
+  70.2  24 | 2020-03-06T15:58:52+0000 [stdout#info] Result for b'live.github.com' is ['140.82.113.25']
+  82.7 TEL | (proxy checking local liveness)
+  82.8  24 | 2020-03-06T15:59:04+0000 [Poll#info] Checkpoint
+  88.8  35 | c : DNS request from ('192.168.93.249', 45542) to None: 46 bytes
+  88.8  24 | 2020-03-06T15:59:10+0000 [stdout#info] A query: b'eyra-prd-postgresql.eyra-prd'
+  88.8  24 | 2020-03-06T15:59:10+0000 [stdout#info] Result for b'eyra-prd-postgresql.eyra-prd' is ['172.20.253.94']
+  88.8  35 | c : Accept TCP: 192.168.93.249:60822 -> 172.20.253.94:5432.
+  89.0  35 |  s: SW'unknown':Mux#13: deleting (5 remain)
+  89.0  35 |  s: SW#11:172.20.253.94:5432: deleting (4 remain)
+  89.0  35 | c : SW#11:192.168.93.249:60472: deleting (5 remain)
+  89.0  35 | c : SW'unknown':Mux#13: deleting (4 remain)
+  93.6 TEL | [67] Running: sudo -n echo -n
+  93.7 TEL | [67] ran in 0.02 secs.
+  93.8  35 | c : Accept TCP: 192.168.93.249:60880 -> 172.20.253.94:5432.
+ 109.8  35 | c : SW#11:192.168.93.249:60880: deleting (5 remain)
+ 109.8  35 | c : SW'unknown':Mux#17: deleting (4 remain)
+ 112.7 TEL | (proxy checking local liveness)
+ 112.8  24 | 2020-03-06T15:59:34+0000 [Poll#info] Checkpoint
+ 123.7 TEL | [68] Running: sudo -n echo -n
+ 123.7 TEL | [68] ran in 0.02 secs.
+ 130.3  35 | c : DNS request from ('192.168.93.249', 46090) to None: 40 bytes
+ 130.3  24 | 2020-03-06T15:59:52+0000 [stdout#info] A query: b'safebrowsing.brave.com'
+ 130.4  24 | 2020-03-06T15:59:52+0000 [stdout#info] Result for b'safebrowsing.brave.com' is ['151.101.113.7']
+ 142.7 TEL | (proxy checking local liveness)
+ 142.8  24 | 2020-03-06T16:00:04+0000 [Poll#info] Checkpoint
+ 146.7  35 | c : DNS request from ('192.168.93.249', 43150) to None: 46 bytes
+ 146.7  24 | 2020-03-06T16:00:08+0000 [stdout#info] A query: b'eyra-prd-postgresql.eyra-prd'
+ 146.7  24 | 2020-03-06T16:00:08+0000 [stdout#info] Result for b'eyra-prd-postgresql.eyra-prd' is ['172.20.253.94']
+ 146.7  35 | c : Accept TCP: 192.168.93.249:33210 -> 172.20.253.94:5432.
+ 151.8  35 | c : Accept TCP: 192.168.93.249:33270 -> 172.20.253.94:5432.
+ 153.7 TEL | [69] Running: sudo -n echo -n
+ 153.8 TEL | [69] ran in 0.01 secs.
+ 162.5  35 |  s: SW'unknown':Mux#17: deleting (9 remain)
+ 162.5  35 |  s: SW#6:172.20.253.94:5432: deleting (8 remain)
+ 162.5  35 |  s: SW#-1:172.20.253.94:5432: deleting (7 remain)
+ 162.5  35 |  s: SW'unknown':Mux#21: deleting (6 remain)
+ 172.7 TEL | (proxy checking local liveness)
+ 172.8  24 | 2020-03-06T16:00:34+0000 [Poll#info] Checkpoint
+ 179.3  35 | c : DNS request from ('192.168.93.249', 34041) to None: 46 bytes
+ 179.3  24 | 2020-03-06T16:00:41+0000 [stdout#info] A query: b'eyra-prd-postgresql.eyra-prd'
+ 179.3  24 | 2020-03-06T16:00:41+0000 [stdout#info] Result for b'eyra-prd-postgresql.eyra-prd' is ['172.20.253.94']
+ 179.3  35 | c : Accept TCP: 192.168.93.249:33504 -> 172.20.253.94:5432.
+ 182.3  35 | c : SW'unknown':Mux#21: deleting (9 remain)
+ 182.3  35 | c : SW#13:192.168.93.249:33270: deleting (8 remain)
+ 183.8 TEL | [70] Running: sudo -n echo -n
+ 183.8 TEL | [70] ran in 0.01 secs.
+ 184.4  35 | c : Accept TCP: 192.168.93.249:33546 -> 172.20.253.94:5432.
+ 185.6  35 |  s: SW'unknown':Mux#24: deleting (9 remain)
+ 185.6  35 |  s: SW#9:172.20.253.94:5432: deleting (8 remain)
+ 185.7  35 | c : SW#13:192.168.93.249:33546: deleting (9 remain)
+ 185.7  35 | c : SW'unknown':Mux#24: deleting (8 remain)
+ 195.0  35 | c : DNS request from ('192.168.93.249', 37393) to None: 33 bytes
+ 195.0  24 | 2020-03-06T16:00:56+0000 [stdout#info] A query: b'play.google.com'
+ 195.0  24 | 2020-03-06T16:00:57+0000 [stdout#info] Result for b'play.google.com' is ['172.217.23.110']
+ 202.7 TEL | (proxy checking local liveness)
+ 202.7  24 | 2020-03-06T16:01:04+0000 [Poll#info] Checkpoint
+ 212.3  35 | c : DNS request from ('192.168.93.249', 52448) to None: 39 bytes
+ 212.3  24 | 2020-03-06T16:01:14+0000 [stdout#info] A query: b'api.eyrabenchmark.net'
+ 212.3  24 | 2020-03-06T16:01:14+0000 [stdout#info] Result for b'api.eyrabenchmark.net' is ['3.121.13.253', '52.59.134.185']
+ 213.8 TEL | [71] Running: sudo -n echo -n
+ 213.8 TEL | [71] ran in 0.01 secs.
+ 216.6  35 | c : DNS request from ('192.168.93.249', 33442) to None: 41 bytes
+ 216.6  24 | 2020-03-06T16:01:18+0000 [stdout#info] A query: b'resources.jetbrains.com'
+ 216.6  24 | 2020-03-06T16:01:18+0000 [stdout#info] Result for b'resources.jetbrains.com' is ['99.86.3.58', '99.86.3.56', '99.86.3.44', '99.86.3.45']
+ 232.7 TEL | (proxy checking local liveness)
+ 232.8  24 | 2020-03-06T16:01:34+0000 [Poll#info] Checkpoint
+ 236.9  35 | c : DNS request from ('192.168.93.249', 57914) to None: 39 bytes
+ 236.9  24 | 2020-03-06T16:01:38+0000 [stdout#info] A query: b'plugins.jetbrains.com'
+ 237.0  24 | 2020-03-06T16:01:38+0000 [stdout#info] Result for b'plugins.jetbrains.com' is ['99.86.3.83', '99.86.3.23', '99.86.3.100', '99.86.3.3']
+ 237.0  35 | c : DNS request from ('192.168.93.249', 51594) to None: 35 bytes
+ 237.0  24 | 2020-03-06T16:01:39+0000 [stdout#info] A query: b'www.jetbrains.com'
+ 237.1  24 | 2020-03-06T16:01:39+0000 [stdout#info] Result for b'www.jetbrains.com' is ['18.200.1.4', '34.251.128.46']
+ 243.9 TEL | [72] Running: sudo -n echo -n
+ 243.9 TEL | [72] ran in 0.02 secs.
+ 262.7 TEL | (proxy checking local liveness)
+ 262.8  24 | 2020-03-06T16:02:04+0000 [Poll#info] Checkpoint
+ 264.4  35 | c : DNS request from ('192.168.93.249', 47169) to None: 35 bytes
+ 264.4  24 | 2020-03-06T16:02:06+0000 [stdout#info] A query: b'no-thanks.invalid'
+ 264.5  24 | 2020-03-06T16:02:06+0000 [stdout#info] getaddrinfo error: [Errno -2] Name does not resolve
+ 273.9 TEL | [73] Running: sudo -n echo -n
+ 273.9 TEL | [73] ran in 0.01 secs.
+ 292.8 TEL | (proxy checking local liveness)
+ 292.8  24 | 2020-03-06T16:02:34+0000 [Poll#info] Checkpoint
+ 303.9 >>> | Keyboard interrupt (Ctrl-C/Ctrl-Break) pressed
+ 303.9 >>> | Exit cleanup in progress
+ 303.9 TEL | (Cleanup) Terminate local process
+ 303.9 TEL | (Cleanup) Kill BG process [35] sshuttle
+ 303.9  35 | >> iptables -t nat -D OUTPUT -j sshuttle-12300
+ 303.9 TEL | (Cleanup) Unmount remote filesystem
+ 303.9 TEL | [74] Running: fusermount -z -u /tmp/tel-u6ue04ni/fs
+ 303.9  35 | >> iptables -t nat -D PREROUTING -j sshuttle-12300
+ 303.9  35 | >> iptables -t nat -F sshuttle-12300
+ 303.9  74 | fusermount: entry for /tmp/tel-u6ue04ni/fs not found in /etc/mtab
+ 303.9 TEL | [74] exit 1 in 0.00 secs.
+ 303.9 TEL | (Cleanup) Unmount remote filesystem failed:
+ 303.9 TEL | (Cleanup)   Command '['fusermount', '-z', '-u', '/tmp/tel-u6ue04ni/fs']' returned non-zero exit status 1.
+ 303.9 TEL | (Cleanup) Kill BG process [32] SSH port forward (socks and proxy poll)
+ 303.9 TEL | [32] SSH port forward (socks and proxy poll): exit 0
+ 303.9  35 | >> iptables -t nat -X sshuttle-12300
+ 303.9 TEL | (Cleanup) Kill Web server for proxy poll
+ 303.9 TEL | [35] sshuttle: exit -15
+ 304.0 TEL | [75] Running: sudo -n echo -n
+ 304.0 TEL | [75] ran in 0.02 secs.
+ 304.3 TEL | (Cleanup) Kill BG process [31] SSH port forward (exposed ports)
+ 304.3 TEL | [31] SSH port forward (exposed ports): exit 0
+ 304.3 TEL | (Cleanup) Kill BG process [25] kubectl port-forward
+ 304.3 TEL | [25] kubectl port-forward: exit -15
+ 304.3 TEL | (Cleanup) Kill BG process [24] kubectl logs
+ 304.3 TEL | [24] kubectl logs: exit -15
+ 304.3 TEL | Background process (kubectl logs) exited with return code -15. Command was:
+ 304.3 TEL |   kubectl --context aws --namespace eyra-prd logs -f eyra-prd-web-bb52fab147d9474dab6438f05018dbaa-5f6cc6b67d-qlvc7 --container web --tail=10
+ 304.3 TEL | 
+ 304.3 TEL | Recent output was:
+ 304.3 TEL |   2020-03-06T16:01:18+0000 [stdout#info] Result for b'resources.jetbrains.com' is ['99.86.3.58', '99.86.3.56', '99.86.3.44', '99.86.3.45']
+ 304.3 TEL |   2020-03-06T16:01:34+0000 [Poll#info] Checkpoint
+ 304.3 TEL |   2020-03-06T16:01:38+0000 [stdout#info] A query: b'plugins.jetbrains.com'
+ 304.3 TEL |   2020-03-06T16:01:38+0000 [stdout#info] Result for b'plugins.jetbrains.com' is ['99.86.3.83', '99.86.3.23', '99.86.3.100', '99.86.3.3']
+ 304.3 TEL |   2020-03-06T16:01:39+0000 [stdout#info] A query: b'www.jetbrains.com'
+ 304.3 TEL |   2020-03-06T16:01:39+0000 [stdout#info] Result for b'www.jetbrains.com' is ['18.200.1.4', '34.251.128.46']
+ 304.3 TEL |   2020-03-06T16:02:04+0000 [Poll#info] Checkpoint
+ 304.3 TEL |   2020-03-06T16:02:06+0000 [stdout#info] A query: b'no-thanks.invalid'
+ 304.3 TEL |   2020-03-06T16:02:06+0000 [stdout#info] getaddrinfo error: [Errno -2] Name does not resolve
+ 304.3 TEL |   2020-03-06T16:02:34+0000 [Poll#info] Checkpoint
+ 304.3 TEL | (Cleanup) Re-scale original deployment
+ 304.3 TEL | [76] Running: kubectl --context aws --namespace eyra-prd scale deployment eyra-prd-web --replicas=2
+ 304.8  76 | deployment.extensions/eyra-prd-web scaled
+ 304.8 TEL | [76] ran in 0.49 secs.
+ 304.8 TEL | (Cleanup) Delete new deployment
+ 304.8 >>> | Swapping Deployment eyra-prd-web back to its original state
+ 304.8 TEL | [77] Running: kubectl --context aws --namespace eyra-prd delete deployment eyra-prd-web-bb52fab147d9474dab6438f05018dbaa
+ 305.1  77 | deployment.extensions "eyra-prd-web-bb52fab147d9474dab6438f05018dbaa" deleted
+ 305.1 TEL | [77] ran in 0.30 secs.
+ 305.1 TEL | (Cleanup) Show version notice
+ 305.1 >>> | 
+ 305.1 >>> | Telepresence 0.104 is available (you're running 0.100). https://www.telepresence.io/reference/changelog
+ 305.1 TEL | (Cleanup) Kill sudo privileges holder
+ 305.1 TEL | (Cleanup) Stop time tracking
+ 305.1 TEL | END SPAN main.py:40(main)  305.1s
+ 305.1 TEL | (Cleanup) Remove temporary directory
+ 305.1 TEL | (Cleanup) Save caches
+ 306.0 TEL | (sudo privileges holder thread exiting)

@@ -113,7 +113,8 @@ def image_to_xml(image_path):
     return template.render(
         text_boxes=text_boxes,
         dimensions=dimensions,
-        filename=basename(image_path)
+        filename=basename(image_path),
+        id=splitext(basename(image_path))[0]
     )
 
 
@@ -121,6 +122,6 @@ if __name__ == '__main__':
     for path in image_paths:
         output_path = Path(output_folder) / Path(splitext(basename(path))[0] + '.xml')
         with open(output_path, 'w+') as f:
-            f.write(image_to_xml(image_paths[0]))
+            f.write(image_to_xml(path))
 
 

@@ -2,7 +2,7 @@
 <PcGts xmlns="http://schema.primaresearch.org/PAGE/gts/pagecontent/2010-03-19"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://schema.primaresearch.org/PAGE/gts/pagecontent/2010-03-19 http://schema.primaresearch.org/PAGE/gts/pagecontent/2010-03-19/pagecontent.xsd"
-       pcGtsId="pc-00530982">
+       pcGtsId="pc-{{id}}">
     <Metadata>
         <Creator></Creator>
         <Created>2011-10-16T04:16:45</Created>

@@ -1,2 +1,4 @@
-git+https://github.com/eyra-benchmark/page_xml_gen
+jinja2
 faker
+Pillow
+shapely

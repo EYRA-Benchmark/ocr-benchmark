@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PcGts xmlns="http://schema.primaresearch.org/PAGE/gts/pagecontent/2010-03-19"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://schema.primaresearch.org/PAGE/gts/pagecontent/2010-03-19 http://schema.primaresearch.org/PAGE/gts/pagecontent/2010-03-19/pagecontent.xsd"
+       pcGtsId="pc-00530982">
+    <Metadata>
+        <Creator></Creator>
+        <Created>2011-10-16T04:16:45</Created>
+        <LastChange>2012-02-09T17:17:16</LastChange>
+    </Metadata>
+    <Page imageFilename="{{filename}}" imageWidth="{{dimensions[0]}}" imageHeight="{{dimensions[1]}}">
+        <ReadingOrder>
+        </ReadingOrder>
+		{% for text_box in text_boxes %}
+        <TextRegion id="r{{loop.index}}" readingDirection="left-to-right" type="paragraph">
+            <Coords>
+				{% set points = text_box.points %}
+				{%- for point in points -%}
+                <Point x="{{point[0]}}" y="{{point[1]}}" />
+				{%- endfor %}
+            </Coords>
+            <TextEquiv>
+                <PlainText></PlainText>
+                <Unicode>{{text_box.text}}
+                </Unicode>
+            </TextEquiv>
+        </TextRegion>
+    	{% endfor %}
+    </Page>
+</PcGts>

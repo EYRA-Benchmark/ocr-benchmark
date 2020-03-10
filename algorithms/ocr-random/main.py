@@ -1,19 +1,16 @@
 import itertools
 import random
+import sys
 from dataclasses import dataclass
 from os.path import basename, splitext
 from pathlib import Path
+from glob import glob
 
 import faker
 from jinja2 import Template
-from glob import glob
 from PIL import Image
 from shapely.geometry import Polygon
 
-image_paths = glob('/tmp/images/*.tif')
-image_paths = glob('/home/tom/Downloads/*.tif')
-
-output_folder = './'
 
 with open('template.xml') as f:
     template = Template(f.read())
@@ -119,9 +116,17 @@ def image_to_xml(image_path):
 
 
 if __name__ == '__main__':
-    for path in image_paths:
-        output_path = Path(output_folder) / Path(splitext(basename(path))[0] + '.xml')
-        with open(output_path, 'w+') as f:
+    if len(sys.argv) != 3:
+        print("Usage: main.py <input_path> <output_path>")
+        exit(1)
+
+    input_images = glob(sys.argv[1] + '/*.tif')
+    print(f"Found {len(input_images)} images")
+    output_path = sys.argv[2]
+    for path in input_images:
+        output_file_path = Path(output_path) / Path(splitext(basename(path))[0] + '.xml')
+        with open(output_file_path, 'w+') as f:
             f.write(image_to_xml(path))
+            print("Wrote " + basename(output_file_path))
 
 

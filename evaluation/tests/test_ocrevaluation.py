@@ -3,6 +3,7 @@ import tempfile
 import pytest
 import fire
 import untangle
+import cwltool.factory
 
 
 @pytest.fixture
@@ -31,6 +32,9 @@ def test_ocrevaluation(gtXML, mockXML):
 
     gt.write(gtRegion.TextEquiv.Unicode.cdata.encode('utf-8'))
     mock.write(mockRegion.TextEquiv.Unicode.cdata.encode('utf-8'))
+
+    fac = cwltool.factory.Factory()
+    echo = fac.make("cwl/ocrevaluation.cwl")
 
     gt.close()
     mock.close()

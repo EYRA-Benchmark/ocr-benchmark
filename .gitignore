@@ -2,3 +2,6 @@
 data
 lost+found
 .ipynb_checkpoints
+__pycache__
+.vscode
+.pytest_cache

@@ -1,0 +1,9 @@
+click
+pytest
+fire
+untangle
+cwltool
+numpy
+shapely
+beautifulsoup4
+nlppln

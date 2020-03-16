@@ -19,8 +19,10 @@ outputs:
   character_data:
     type: File
     outputBinding:
+      loadContents: true
       glob: "*-character.csv"
   global_data:
     type: File
     outputBinding:
+      loadContents: true
       glob: "*-global.csv"

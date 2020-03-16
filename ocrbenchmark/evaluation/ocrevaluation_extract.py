@@ -37,22 +37,22 @@ def ocrevaluation_extract(in_file, out_dir):
                 if i != 0:
                     lines[i] = [doc]
                 else:
-                    lines[i] = ['']
-            lines[i].append(entry)
+                    lines[i] = ['doc_id']
+            lines[i].append(entry.replace(',', '.'))
 
     out_file = os.path.join(out_dir, '{}-global.csv'.format(doc))
     with codecs.open(out_file, 'wb', encoding='utf-8') as f:
         for i in range(len(lines.keys())):
-            f.write(u','.join(lines[i]))
+            f.write(u';'.join(lines[i]))
             f.write(u'\n')
 
     t = tables[1]
-    table_data = [[cell.text for cell in row('td')] for row in t('tr')]
+    table_data = [[cell.text.replace(',', '.') for cell in row('td')] for row in t('tr')]
     out_file = os.path.join(out_dir, '{}-character.csv'.format(doc))
     with codecs.open(out_file, 'wb', encoding='utf-8') as f:
         for data in table_data:
-            f.write(u'"{}",'.format(data[0]))
-            f.write(u','.join(data[1:]))
+            f.write(u'"{}";'.format(data[0]))
+            f.write(u';'.join(data[1:]))
             f.write(u'\n')
 
 

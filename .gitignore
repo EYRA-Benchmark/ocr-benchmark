@@ -5,3 +5,4 @@ lost+found
 __pycache__
 .vscode
 .pytest_cache
+ocr-venv

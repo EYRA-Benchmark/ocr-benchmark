@@ -1,7 +1,7 @@
 #!/usr/bin/env cwl-runner
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: ["java", "-cp", "/Users/bweel/Software/projects/eyrabenchmark/ocr-benchmark/evaluation/cwl/ocrevalUAtion-1.3.4.jar"]
+baseCommand: ["java", "-cp", "/Users/bweel/Software/projects/eyrabenchmark/ocrbenchmark/ocrbenchmark/evaluation/cwl/ocrevalUAtion-1.3.4.jar"]
 
 requirements:
   - class: InitialWorkDirRequirement

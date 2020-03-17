@@ -4,6 +4,11 @@ import sys
 import fire
 import untangle
 import numpy as np
+import tempfile
+import cwltool.factory
+import pandas as pd
+import io
+import pathlib
 from copy import deepcopy
 from shapely.geometry import Polygon, MultiPolygon, box
 
@@ -58,13 +63,50 @@ def processReadingorder(gtXML, inXML):
     #         inRef=inOrderedGroup[i]['regionRef']))
 
 
-def processTextregions(gtXML, inXML):
-    print('Textregions')
+def callCWL(gt_filename, input_filename):
+    fac = cwltool.factory.Factory()
+    ocrevaluation_performance = fac.make("ocrbenchmark/evaluation/cwl/ocrevaluation-performance.cwl")
+    input = {
+        'gt': {
+            "class": "File",
+            "location": pathlib.Path(gt_filename).as_uri()
+        },
+        'ocr': {
+            "class": "File",
+            "location": pathlib.Path(input_filename).as_uri()
+        }
+    }
+    return ocrevaluation_performance(**input)
 
-    # Get TextRegions
-    for TextRegion in gtXML.PcGts.Page.TextRegion:
-        print(TextRegion['id'] + '    ' + TextRegion['type'])
-        print(TextRegion.TextEquiv.Unicode.cdata)
+
+def processTextregions(gtXML, inXML, gt_matches):
+    frames = []
+    for gt_id, in_id in gt_matches.items():
+        # Get the matching textregions
+
+        # TODO: This is probably  wrong!
+        gtRegion = gtXML.PcGts.Page.TextRegion[gt_id]
+        inRegion = inXML.PcGts.Page.TextRegion[in_id]
+
+        # Write the textregion to temp file
+        gt = tempfile.NamedTemporaryFile(suffix='.txt')
+        inp = tempfile.NamedTemporaryFile(suffix='.txt')
+
+        gt.write(gtRegion.TextEquiv.Unicode.cdata.encode('utf-8'))
+        inp.write(inRegion.TextEquiv.Unicode.cdata.encode('utf-8'))
+
+        gt.flush()
+        inp.flush()
+
+        result = callCWL(gt.name, inp.name)
+        data = result['global_data']['contents']
+        reader = io.StringIO(data)
+        frames.append(pd.read_csv(reader, sep=';', index_col='doc_id'))
+
+        gt.close()
+        inp.close()
+
+    return pd.concat(frames)
 
 
 def processBoundingboxes(gtXML, inXML):

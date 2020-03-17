@@ -28,8 +28,8 @@ def test_ocrevaluation(gtXML, mockXML):
     gtRegion = gtXML.PcGts.Page.TextRegion[2]
     mockRegion = mockXML.PcGts.Page.TextRegion[2]
 
-    gt = tempfile.NamedTemporaryFile(suffix='.txt', delete=False)
-    mock = tempfile.NamedTemporaryFile(suffix='.txt', delete=False)
+    gt = tempfile.NamedTemporaryFile(suffix='.txt')
+    mock = tempfile.NamedTemporaryFile(suffix='.txt')
 
     gt_name = gt.name
     mock_name = mock.name
@@ -61,8 +61,5 @@ def test_ocrevaluation(gtXML, mockXML):
 
     gt.close()
     mock.close()
-
-    os.unlink(gt_name)
-    os.unlink(mock_name)
 
     assert (df['CER'][0] == 2.78)

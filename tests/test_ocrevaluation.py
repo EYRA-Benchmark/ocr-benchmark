@@ -6,6 +6,7 @@ import untangle
 import cwltool.factory
 import pandas as pd
 import io
+import pathlib
 
 
 @pytest.fixture
@@ -27,39 +28,41 @@ def test_ocrevaluation(gtXML, mockXML):
     gtRegion = gtXML.PcGts.Page.TextRegion[2]
     mockRegion = mockXML.PcGts.Page.TextRegion[2]
 
-    #gt = tempfile.NamedTemporaryFile(suffix='.txt', delete=False)
-    #mock = tempfile.NamedTemporaryFile(suffix='.txt', delete=False)
+    gt = tempfile.NamedTemporaryFile(suffix='.txt', delete=False)
+    mock = tempfile.NamedTemporaryFile(suffix='.txt', delete=False)
 
-    #gt_name = gt.name
-    #mock_name = mock.name
+    gt_name = gt.name
+    mock_name = mock.name
 
-    #gt.write(gtRegion.TextEquiv.Unicode.cdata.encode('utf-8'))
-    #mock.write(mockRegion.TextEquiv.Unicode.cdata.encode('utf-8'))
+    # Write temp files
+    gt.write(gtRegion.TextEquiv.Unicode.cdata.encode('utf-8'))
+    mock.write(mockRegion.TextEquiv.Unicode.cdata.encode('utf-8'))
+
+    gt.flush()
+    mock.flush()
 
     fac = cwltool.factory.Factory()
-    echo = fac.make("ocrbenchmark/evaluation/cwl/ocrevaluation-performance.cwl")
+    ocrevaluation_performance = fac.make("ocrbenchmark/evaluation/cwl/ocrevaluation-performance.cwl")
     input = {
         'gt': {
             "class": "File",
-            "basename": "gt.txt",
-            "contents": gtRegion.TextEquiv.Unicode.cdata
+            "location": pathlib.Path(gt_name).as_uri()
         },
         'ocr': {
             "class": "File",
-            "basename": "ocr.txt",
-            "contents": mockRegion.TextEquiv.Unicode.cdata
+            "location": pathlib.Path(mock_name).as_uri()
         }
     }
-    result = echo(**input)
+    result = ocrevaluation_performance(**input)
 
     data = result['global_data']['contents']
     reader = io.StringIO(data)
     df = pd.read_csv(reader, sep=';', index_col='doc_id')
 
-    assert (df['CER']['gt_out'] == 2.78)
+    gt.close()
+    mock.close()
 
-    # gt.close()
-    # mock.close()
+    os.unlink(gt_name)
+    os.unlink(mock_name)
 
-    #os.unlink(gtName)
-    #os.unlink(mockName)
+    assert (df['CER'][0] == 2.78)

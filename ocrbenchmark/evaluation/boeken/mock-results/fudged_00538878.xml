@@ -11,11 +11,12 @@
         <ReadingOrder>
             <OrderedGroup id="ro357564684568544579089">
                 <RegionRefIndexed regionRef="r13" index="0"/>
-                <RegionRefIndexed regionRef="r25" index="1"/>
+                <RegionRefIndexed regionRef="renamed_r25" index="1"/>
                 <RegionRefIndexed regionRef="r17" index="2"/>
                 <RegionRefIndexed regionRef="r9" index="3"/>
-                <RegionRefIndexed regionRef="r10" index="4"/>
-                <RegionRefIndexed regionRef="r11" index="5"/>
+                <RegionRefIndexed regionRef="r10a" index="4"/>
+                <RegionRefIndexed regionRef="r10b" index="5"/>
+                <RegionRefIndexed regionRef="r11" index="6"/>
             </OrderedGroup>
         </ReadingOrder>
         <TextRegion id="r6" type="page-number">
@@ -69,10 +70,10 @@
         </TextRegion>
         <TextRegion id="r10a" type="paragraph">
             <Coords>
-                <Point x="436" y="1717"/>
-                <Point x="436" y="1941"/>
-                <Point x="1036" y="1941"/>
-                <Point x="1036" y="1717"/>
+				<Point x="436" y="1717"/>
+				<Point x="436" y="1841"/>
+				<Point x="1436" y="1841"/>
+				<Point x="1436" y="1717"/>
             </Coords>
             <TextEquiv>
                 <PlainText></PlainText>
@@ -83,10 +84,10 @@ gemeesteren verzogt, </Unicode>
         </TextRegion>
         <TextRegion id="r10b" type="paragraph">
             <Coords>
-                <Point x="1036" y="1717"/>
-                <Point x="1036" y="1941"/>
-                <Point x="1436" y="1941"/>
-                <Point x="1436" y="1717"/>
+				<Point x="436" y="1841"/>
+				<Point x="436" y="1941"/>
+				<Point x="1436" y="1941"/>
+				<Point x="1436" y="1841"/>
             </Coords>
             <TextEquiv>
                 <PlainText></PlainText>
@@ -310,7 +311,7 @@ wapenden Arm, waar toe hun voorgemeld Addres
 mede tendeert.</Unicode>
             </TextEquiv>
         </TextRegion>
-        <TextRegion id="r25" type="paragraph">
+        <TextRegion id="renamed_r25" type="paragraph">
             <Coords>
                 <Point x="877" y="1529"/>
                 <Point x="877" y="1578"/>

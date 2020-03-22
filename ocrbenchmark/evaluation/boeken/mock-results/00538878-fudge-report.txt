@@ -1,5 +1,8 @@
 - Changed the ReadingOrder
   - Switched regionRef 25 and 17
+  - Renamed index 1 renamed_r25
+  - Renamed r10 to r10a, Added r10b
+  - Spurious r11 as r11 TextRegion is removed
 
 - Changed TextRegion r7
   - Changed Coords Points with indexes 1&2 to x=507
@@ -112,3 +115,6 @@ to
 - Changed TextRegion r17
   - removed from the middle of the text:
 	"vertegenwoordiging op den I9 en 20 December I785 hebben in confesſo geeld, „ even of aan het „ verzoek en 't daar by gedaane voorel ter op‑ „ gegeeven afvraagingen punueelyk was voldaan"
+
+- Changed TextRegion r25
+  - Changed name to renamed_r25

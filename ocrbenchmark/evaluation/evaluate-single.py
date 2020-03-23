@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 import sys
 import click
@@ -13,14 +13,19 @@ import io
 import pathlib
 from copy import deepcopy
 from shapely.geometry import Polygon, MultiPolygon, box
+import logging
+import cwltool.loghandler
 
 JACCARD_SCORE_THRESHOLD = 0.9
 PIXEL_MATCH_THRESHOLD = 10
 
+# Do not log so much with cwltool
+cwltool.loghandler._logger.setLevel(logging.WARN)
+
+
 @click.command()
 @click.argument('gt_file', type=click.File(encoding='utf-8'))
 @click.argument('in_file', type=click.File(encoding='utf-8'))
-
 def processfile(gt_file, in_file):
     overall_report = {}
     # writeableOutputFile = open(outputfile,"w+")
@@ -32,8 +37,9 @@ def processfile(gt_file, in_file):
 
     readingorder_report = processReadingorder(gtXML, inXML, matches_for_text_processing)
     overall_report['readingorder'] = readingorder_report
-    
-    readingorder_report = processTextregions(gtXML, inXML, matches_for_text_processing)
+
+    textregion_report = processTextregions(gtXML, inXML, matches_for_text_processing)
+    overall_report['textregion_report'] = textregion_report
 
     # processLayout(gtXML, inXML)
 
@@ -56,7 +62,7 @@ def processReadingorder(gtXML, inXML, matches_for_text_processing):
                             key=lambda RegionRefIndexed: RegionRefIndexed['index'])
 
     # Read the reading order of the Ground truth file.
-    gtReadingOrder = []    
+    gtReadingOrder = []
     for i in range(len(gtOrderedGroup)):
         gtReadingOrder.append(gtOrderedGroup[i]['regionRef'])
 
@@ -67,7 +73,7 @@ def processReadingorder(gtXML, inXML, matches_for_text_processing):
             inTranslatedReadingOrder.append(matches_for_text_processing[match])
 
     # Read the reading order of the input file.
-    inReadingOrder = []    
+    inReadingOrder = []
     for i in range(len(inOrderedGroup)):
         inReadingOrder.append(inOrderedGroup[i]['regionRef'])
 
@@ -77,8 +83,7 @@ def processReadingorder(gtXML, inXML, matches_for_text_processing):
 
     s = difflib.SequenceMatcher(None, a, b)
     for tag, i1, i2, j1, j2 in s.get_opcodes():
-        report = ("%7s a[%d:%d] (%s) b[%d:%d] (%s)" %
-              (tag, i1, i2, a[i1:i2], j1, j2, b[j1:j2]))
+        report = ("%7s a[%d:%d] (%s) b[%d:%d] (%s)" % (tag, i1, i2, a[i1:i2], j1, j2, b[j1:j2]))
 
     return report
 
@@ -114,7 +119,10 @@ def processTextregions(gtXML, inXML, matches_for_text_processing):
         if (gt_region_id in matches_for_text_processing):
             inTranslatedRegionName = matches_for_text_processing[gt_region_id]
 
-            # Extract the matching input file Textregion            
+            print(gt_region_id)
+            print(inTranslatedRegionName)
+
+            # Extract the matching input file Textregion
             for in_region in inRegions:
                 if (in_region[0] == inTranslatedRegionName):
                     in_region_id = in_region[0]
@@ -134,12 +142,19 @@ def processTextregions(gtXML, inXML, matches_for_text_processing):
                     result = callCWL(gt_file.name, in_file.name)
                     data = result['global_data']['contents']
                     reader = io.StringIO(data)
-                    frames.append(pd.read_csv(reader, sep=';', index_col='doc_id'))
+
+                    df = pd.read_csv(reader, sep=';')
+                    df['region_id'] = in_region_id
+
+                    df = df.set_index('region_id')
+                    df = df.drop('doc_id', axis=1)
+
+                    frames.append(df)
 
                     gt_file.close()
                     in_file.close()
 
-    return pd.concat(frames)    
+    return pd.concat(frames).transpose().to_dict()
 
 
 def processBoundingboxes(gtXML, inXML):
@@ -163,8 +178,8 @@ def processBoundingboxes(gtXML, inXML):
     boundingboxes_report['score'] = score_single
 
     # All things that are left in the input might (in combination) match with items in the ground truth, so we create unions where the
-    # boundaries are within a threshold value on one border and follow one another in the Y direction (aka are underneath eachother), 
-    # these are 'merged' matches.    
+    # boundaries are within a threshold value on one border and follow one another in the Y direction (aka are underneath eachother),
+    # these are 'merged' matches.
     for in_id_a, in_box_a in inBounds.items():
         for in_id_b, in_box_b in inBounds.items():
             if in_id_a != in_id_b:
@@ -185,13 +200,13 @@ def processBoundingboxes(gtXML, inXML):
     gtBounds_rest, inBounds_rest, matches_merged, score_merged = matchPolygonsAndRemove(gtBounds_copy, inBounds_copy)
     boundingboxes_report['matches_merged'] = matches_merged
     boundingboxes_report['score_merged'] = score_merged
-    
+
     # Record the remaining entries
     boundingboxes_report['false_negatives'] = list(gtBounds_rest.keys())
     boundingboxes_report['false_positives'] = list(inBounds_rest.keys())
 
     # for (gt_id, gt_box) in gtBounds_rest.items():
-        # end_report = end_report + 'Ground Truth "{gt_id}" did not match anything\n'.format(gt_id=gt_id)
+    # end_report = end_report + 'Ground Truth "{gt_id}" did not match anything\n'.format(gt_id=gt_id)
 
     # for in_id, in_box in inBounds_rest.items():
     #     end_report = end_report + 'Input "{in_id}" did not match anything\n'.format(in_id=in_id)
@@ -200,10 +215,10 @@ def processBoundingboxes(gtXML, inXML):
 
     # end_report = end_report + '\nFinal overall bounding box score: {end_score}'.format(end_score=end_score)
     # print(boundingboxes_report)
-    
-    for match in boundingboxes_report['matches']:        
+
+    for match in boundingboxes_report['matches']:
         matches_for_text_processing[match] = boundingboxes_report['matches'][match]['id']
-    for match in boundingboxes_report['matches_merged']:        
+    for match in boundingboxes_report['matches_merged']:
         matches_for_text_processing[match] = boundingboxes_report['matches_merged'][match]['id']
 
     return matches_for_text_processing, boundingboxes_report
@@ -236,7 +251,7 @@ def matchPolygonsAndRemove(gtBounds, inBounds):
             scored_items += 1
 
     if (scored_items > 0):
-        score = score/scored_items
+        score = score / scored_items
 
     return (gtBounds_copy, inBounds_copy, matches, score)
 

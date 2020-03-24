@@ -8,10 +8,17 @@
   - Changed Coords Points with indexes 1&2 to x=507
 
 - Changed TextRegion r9
+<<<<<<< Updated upstream
   - Changed
   "En was onderteekend door alle de Gecon‑itueerdens en Gecommitteerdens."
   to
   "En was ondertekend door alle de Gecon‑itueerdens en Gecommitteerden."
+=======
+  - Changed 
+    "En was onderteekend door alle de Gecon‑itueerdens en Gecommitteerdens." 
+    to 
+    "En was ondertekend door alle de Gecon‑itueerdens en Gecommitteerden."
+>>>>>>> Stashed changes
 
 - Changed TextRegion r9
   - Changed <Coords> from

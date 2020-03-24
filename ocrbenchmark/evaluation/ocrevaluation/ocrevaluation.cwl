@@ -1,7 +1,7 @@
 #!/usr/bin/env cwl-runner
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: ["java", "-Djava.util.logging.config.file=\"logging.properties\" ", "-cp", "/Users/bweel/Software/projects/eyrabenchmark/ocrbenchmark/ocrbenchmark/evaluation/cwl/ocrevalUAtion-1.3.4.jar"]
+baseCommand: ["java", "-Djava.util.logging.config.file=\"logging.properties\" ", "-cp", "/ocrevalUAtion/target/ocrevaluation.jar"]
 
 requirements:
   - class: InitialWorkDirRequirement

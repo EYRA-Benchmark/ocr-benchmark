@@ -1,7 +1,7 @@
 #!/usr/bin/env cwlrunner
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: ["/usr/bin/python3", "-m","ocrbenchmark.evaluation.ocrevaluation_extract"]
+baseCommand: ["python", "-m","ocrbenchmark.evaluation.ocrevaluation_extract"]
 
 requirements:
   EnvVarRequirement:

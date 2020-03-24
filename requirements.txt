@@ -6,4 +6,3 @@ numpy
 shapely
 beautifulsoup4
 nlppln
-json

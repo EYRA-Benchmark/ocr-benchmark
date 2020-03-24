@@ -1,11 +1,7 @@
 #!/usr/bin/env cwl-runner
 cwlVersion: v1.0
 class: CommandLineTool
-<<<<<<< Updated upstream
 baseCommand: ["java", "-Djava.util.logging.config.file=\"logging.properties\" ", "-cp", "/Users/bweel/Software/projects/eyrabenchmark/ocrbenchmark/ocrbenchmark/evaluation/cwl/ocrevalUAtion-1.3.4.jar"]
-=======
-baseCommand: ["java", "-cp", "/home/maarten/workspace/ocr-benchmark/ocrbenchmark/evaluation/cwl/ocrevalUAtion-1.3.4.jar"]
->>>>>>> Stashed changes
 
 requirements:
   - class: InitialWorkDirRequirement

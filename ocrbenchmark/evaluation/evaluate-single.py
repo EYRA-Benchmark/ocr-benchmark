@@ -1,21 +1,22 @@
 #!/usr/bin/env python
 
-import sys
-import click
-import untangle
-import json
 import difflib
-import numpy as np
-import tempfile
-import cwltool.factory
-from cwltool.context import RuntimeContext
-import pandas as pd
 import io
-import pathlib
-from copy import deepcopy
-from shapely.geometry import Polygon, MultiPolygon, box
+import json
 import logging
+import pathlib
+import sys
+import tempfile
+from copy import deepcopy
+
+import click
+import cwltool.factory
 import cwltool.loghandler
+import numpy as np
+import pandas as pd
+import untangle
+from cwltool.context import RuntimeContext
+from shapely.geometry import MultiPolygon, Polygon, box
 
 JACCARD_SCORE_THRESHOLD = 0.9
 PIXEL_MATCH_THRESHOLD = 10
@@ -93,6 +94,8 @@ def processReadingorder(gtXML, inXML, matches_for_text_processing):
 
 def callCWL(gt_filename, input_filename):
     fac = cwltool.factory.Factory()
+    fac.preserve_entire_environment = True
+
     ocrevaluation_performance = fac.make(
         "ocrbenchmark/evaluation/cwl/ocrevaluation-performance.cwl")
     input = {

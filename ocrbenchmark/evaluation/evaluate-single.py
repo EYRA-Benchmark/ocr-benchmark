@@ -127,9 +127,6 @@ def processTextregions(gtXML, inXML, matches_for_text_processing):
         if (gt_region_id in matches_for_text_processing):
             inTranslatedRegionName = matches_for_text_processing[gt_region_id]
 
-            print(gt_region_id)
-            print(inTranslatedRegionName)
-
             # Extract the matching input file Textregion
             # Write tmp files
             gt_file = tempfile.NamedTemporaryFile(suffix='.txt')
@@ -139,7 +136,6 @@ def processTextregions(gtXML, inXML, matches_for_text_processing):
             in_file = tempfile.NamedTemporaryFile(suffix='.txt')
             for in_region in inRegions:
                 if (in_region[0] in inTranslatedRegionName):
-                    in_region_id = in_region[0]
                     in_region_text = in_region[1].TextEquiv.Unicode.cdata
 
                     in_file.write(in_region_text.encode('utf-8'))
@@ -153,7 +149,7 @@ def processTextregions(gtXML, inXML, matches_for_text_processing):
             reader = io.StringIO(data)
 
             df = pd.read_csv(reader, sep=';')
-            df['region_id'] = in_region_id
+            df['region_id'] = inTranslatedRegionName
 
             df = df.set_index('region_id')
             df = df.drop('doc_id', axis=1)

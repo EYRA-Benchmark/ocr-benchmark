@@ -23,11 +23,7 @@ PIXEL_MATCH_THRESHOLD = 10
 # Do not log so much with cwltool
 cwltool.loghandler._logger.setLevel(logging.WARN)
 
-
-@click.command()
-@click.argument('gt_file', type=click.File(encoding='utf-8'))
-@click.argument('in_file', type=click.File(encoding='utf-8'))
-def processfile(gt_file, in_file):
+def process_single(gt_file, in_file):
     overall_report = {}
     # writeableOutputFile = open(outputfile,"w+")
     gtXML = untangle.parse(gt_file)  #open(ground_truth_file,"r")
@@ -53,7 +49,14 @@ def processfile(gt_file, in_file):
     # readableGroundtruthFile.close()
     # readableInputFile.close()
 
-    print(json.dumps(overall_report, indent=4, sort_keys=True))
+    return overall_report
+
+@click.command()
+@click.argument('gt_file', type=click.File(encoding='utf-8'))
+@click.argument('in_file', type=click.File(encoding='utf-8'))
+def processfile(gt_file, in_file):
+    report = process_single(gt_file, in_file)
+    print(json.dumps(report, indent=4, sort_keys=True))
 
 
 def processReadingorder(gtXML, inXML, matches_for_text_processing):

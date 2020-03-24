@@ -37,4 +37,5 @@ COPY . /ocrbenchmark
 WORKDIR  /ocrbenchmark
 RUN pip install .
 
-ENTRYPOINT ["python", "-m", "ocrbenchmark.evaluation.evaluate-single"]
+ENTRYPOINT ["sh", "-c"]
+CMD ["./run.sh"]

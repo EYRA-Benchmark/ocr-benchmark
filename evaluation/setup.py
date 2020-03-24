@@ -13,6 +13,7 @@ setup(name='ocrbenchmark',
           'numpy>=1.18', 'Shapely>=1.7', 'beautifulsoup4>=4.8', 'nlppln>=0.3.3'
       ],
       scripts=[
-          'ocrbenchmark/evaluation/evaluate-single.py',
+          'ocrbenchmark/evaluation/evaluate_single.py',
+          'ocrbenchmark/evaluation/evaluate_all.py',
           'ocrbenchmark/evaluation/ocrevaluation_extract.py'
       ])

@@ -1,20 +1,21 @@
 #!/usr/bin/env python
 
-import sys
-import click
-import untangle
-import json
 import difflib
-import numpy as np
-import tempfile
-import cwltool.factory
-import pandas as pd
 import io
-import pathlib
-from copy import deepcopy
-from shapely.geometry import Polygon, MultiPolygon, box
+import json
 import logging
+import pathlib
+import sys
+import tempfile
+from copy import deepcopy
+
+import click
+import cwltool.factory
 import cwltool.loghandler
+import numpy as np
+import pandas as pd
+import untangle
+from shapely.geometry import MultiPolygon, Polygon, box
 
 JACCARD_SCORE_THRESHOLD = 0.9
 PIXEL_MATCH_THRESHOLD = 10
@@ -32,13 +33,16 @@ def processfile(gt_file, in_file):
     gtXML = untangle.parse(gt_file)  #open(ground_truth_file,"r")
     inXML = untangle.parse(in_file)  #open(input_file,"r")
 
-    matches_for_text_processing, boundingboxes_report = processBoundingboxes(gtXML, inXML)
+    matches_for_text_processing, boundingboxes_report = processBoundingboxes(
+        gtXML, inXML)
     overall_report['boundingboxes'] = boundingboxes_report
 
-    readingorder_report = processReadingorder(gtXML, inXML, matches_for_text_processing)
+    readingorder_report = processReadingorder(gtXML, inXML,
+                                              matches_for_text_processing)
     overall_report['readingorder'] = readingorder_report
 
-    textregion_report = processTextregions(gtXML, inXML, matches_for_text_processing)
+    textregion_report = processTextregions(gtXML, inXML,
+                                           matches_for_text_processing)
     overall_report['textregion_report'] = textregion_report
 
     # processLayout(gtXML, inXML)
@@ -49,17 +53,19 @@ def processfile(gt_file, in_file):
     # readableGroundtruthFile.close()
     # readableInputFile.close()
 
-    # print(json.dumps(overall_report, indent=4, sort_keys=True))
+    print(json.dumps(overall_report, indent=4, sort_keys=True))
 
 
 def processReadingorder(gtXML, inXML, matches_for_text_processing):
     report = {}
 
     # Sort Reading orders by index
-    gtOrderedGroup = sorted(gtXML.PcGts.Page.ReadingOrder.OrderedGroup.RegionRefIndexed,
-                            key=lambda RegionRefIndexed: RegionRefIndexed['index'])
-    inOrderedGroup = sorted(inXML.PcGts.Page.ReadingOrder.OrderedGroup.RegionRefIndexed,
-                            key=lambda RegionRefIndexed: RegionRefIndexed['index'])
+    gtOrderedGroup = sorted(
+        gtXML.PcGts.Page.ReadingOrder.OrderedGroup.RegionRefIndexed,
+        key=lambda RegionRefIndexed: RegionRefIndexed['index'])
+    inOrderedGroup = sorted(
+        inXML.PcGts.Page.ReadingOrder.OrderedGroup.RegionRefIndexed,
+        key=lambda RegionRefIndexed: RegionRefIndexed['index'])
 
     # Read the reading order of the Ground truth file.
     gtReadingOrder = []
@@ -83,14 +89,16 @@ def processReadingorder(gtXML, inXML, matches_for_text_processing):
 
     s = difflib.SequenceMatcher(None, a, b)
     for tag, i1, i2, j1, j2 in s.get_opcodes():
-        report = ("%7s a[%d:%d] (%s) b[%d:%d] (%s)" % (tag, i1, i2, a[i1:i2], j1, j2, b[j1:j2]))
+        report = ("%7s a[%d:%d] (%s) b[%d:%d] (%s)" %
+                  (tag, i1, i2, a[i1:i2], j1, j2, b[j1:j2]))
 
     return report
 
 
 def callCWL(gt_filename, input_filename):
     fac = cwltool.factory.Factory()
-    ocrevaluation_performance = fac.make("ocrbenchmark/evaluation/cwl/ocrevaluation-performance.cwl")
+    ocrevaluation_performance = fac.make(
+        "ocrbenchmark/evaluation/ocrevaluation/ocrevaluation-performance.cwl")
     input = {
         'gt': {
             "class": "File",
@@ -173,7 +181,8 @@ def processBoundingboxes(gtXML, inXML):
         inBounds[tr_id] = box(*polygon.bounds)
 
     # Search for and get all of the direct matches. gtBounds_copy and inBounds_copy will house the remaining entries only.
-    gtBounds_copy, inBounds_copy, matches, score_single = matchPolygonsAndRemove(gtBounds, inBounds)
+    gtBounds_copy, inBounds_copy, matches, score_single = matchPolygonsAndRemove(
+        gtBounds, inBounds)
     boundingboxes_report['matches'] = matches
     boundingboxes_report['score'] = score_single
 
@@ -191,13 +200,15 @@ def processBoundingboxes(gtXML, inXML):
                      abs(minx_b - minx_a) < PIXEL_MATCH_THRESHOLD and \
                      abs(maxx_b - maxx_a) < PIXEL_MATCH_THRESHOLD:
 
-                    inBounds_copy[in_id_b + ',' + in_id_a] = in_box_a.union(in_box_b)
+                    inBounds_copy[in_id_b + ','
+                                  + in_id_a] = in_box_a.union(in_box_b)
                     del inBounds_copy[in_id_a]
                     del inBounds_copy[in_id_b]
 
     # The compounded boxes are now matched with the remaining boxes in the ground truth file.
     # gtBounds_rest and inBounds_rest will house the remaining entries only.
-    gtBounds_rest, inBounds_rest, matches_merged, score_merged = matchPolygonsAndRemove(gtBounds_copy, inBounds_copy)
+    gtBounds_rest, inBounds_rest, matches_merged, score_merged = matchPolygonsAndRemove(
+        gtBounds_copy, inBounds_copy)
     boundingboxes_report['matches_merged'] = matches_merged
     boundingboxes_report['score_merged'] = score_merged
 
@@ -217,9 +228,11 @@ def processBoundingboxes(gtXML, inXML):
     # print(boundingboxes_report)
 
     for match in boundingboxes_report['matches']:
-        matches_for_text_processing[match] = boundingboxes_report['matches'][match]['id']
+        matches_for_text_processing[match] = boundingboxes_report['matches'][
+            match]['id']
     for match in boundingboxes_report['matches_merged']:
-        matches_for_text_processing[match] = boundingboxes_report['matches_merged'][match]['id']
+        matches_for_text_processing[match] = boundingboxes_report[
+            'matches_merged'][match]['id']
 
     return matches_for_text_processing, boundingboxes_report
 
@@ -285,15 +298,15 @@ def processLayout(gtXML, inXML):
 
             del inBounds[match_id]
             del gtLayout_copy[match_id]
-            print('"{gt_id}" matched with "{in_id}" with score {score}'.format(in_id=match_id,
-                                                                               gt_id=gt_id,
-                                                                               score=scores[max_index]))
+            print('"{gt_id}" matched with "{in_id}" with score {score}'.format(
+                in_id=match_id, gt_id=gt_id, score=scores[max_index]))
 
     for in_id, in_box in inBounds.items():
         print('Input "{in_id}" did not match anything'.format(in_id=in_id))
 
     for (gt_id, gt_box) in gtLayout_copy.items():
-        print('Ground Truth "{gt_id}" did not match anything'.format(gt_id=gt_id))
+        print(
+            'Ground Truth "{gt_id}" did not match anything'.format(gt_id=gt_id))
 
 
 # def processLayout(gtXML, inXML):

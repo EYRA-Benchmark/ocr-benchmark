@@ -1,9 +1,0 @@
-click
-pytest
-untangle
-cwltool
-numpy
-shapely
-beautifulsoup4
-nlppln
-json

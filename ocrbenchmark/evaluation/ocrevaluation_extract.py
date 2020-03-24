@@ -1,11 +1,10 @@
 #!/usr/bin/env python
-import click
 import codecs
 import os
 import tempfile
 
+import click
 from bs4 import BeautifulSoup
-
 from nlppln.utils import create_dirs, remove_ext
 
 
@@ -18,7 +17,8 @@ def ocrevaluation_extract(in_file, out_dir):
     soup = BeautifulSoup(in_file, 'lxml')
     tables = []
     for header in soup.find_all('h2'):
-        if (header.text == 'General results' or header.text.startswith('Error rate')):
+        if (header.text == 'General results'
+                or header.text.startswith('Error rate')):
             tables.append(header.find_next('table'))
 
     assert len(tables) == 2
@@ -47,7 +47,8 @@ def ocrevaluation_extract(in_file, out_dir):
             f.write(u'\n')
 
     t = tables[1]
-    table_data = [[cell.text.replace(',', '.') for cell in row('td')] for row in t('tr')]
+    table_data = [[cell.text.replace(',', '.') for cell in row('td')]
+                  for row in t('tr')]
     out_file = os.path.join(out_dir, '{}-character.csv'.format(doc))
     with codecs.open(out_file, 'wb', encoding='utf-8') as f:
         for data in table_data:

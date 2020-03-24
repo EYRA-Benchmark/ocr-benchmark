@@ -131,36 +131,37 @@ def processTextregions(gtXML, inXML, matches_for_text_processing):
             print(inTranslatedRegionName)
 
             # Extract the matching input file Textregion
+            # Write tmp files
+            gt_file = tempfile.NamedTemporaryFile(suffix='.txt')
+            gt_file.write(gt_region_text.encode('utf-8'))
+
+            # Writes normal and combined regions to file
+            in_file = tempfile.NamedTemporaryFile(suffix='.txt')
             for in_region in inRegions:
-                if (in_region[0] == inTranslatedRegionName):
+                if (in_region[0] in inTranslatedRegionName):
                     in_region_id = in_region[0]
                     in_region_text = in_region[1].TextEquiv.Unicode.cdata
 
-                    # Write tmp files
-                    gt_file = tempfile.NamedTemporaryFile(suffix='.txt')
-                    in_file = tempfile.NamedTemporaryFile(suffix='.txt')
-
-                    gt_file.write(gt_region_text.encode('utf-8'))
                     in_file.write(in_region_text.encode('utf-8'))
 
-                    gt_file.flush()
-                    in_file.flush()
+            gt_file.flush()
+            in_file.flush()
 
-                    # call OCREvaluation through CWL workflow and write input to frames
-                    result = callCWL(gt_file.name, in_file.name)
-                    data = result['global_data']['contents']
-                    reader = io.StringIO(data)
+            # call OCREvaluation through CWL workflow and write input to frames
+            result = callCWL(gt_file.name, in_file.name)
+            data = result['global_data']['contents']
+            reader = io.StringIO(data)
 
-                    df = pd.read_csv(reader, sep=';')
-                    df['region_id'] = in_region_id
+            df = pd.read_csv(reader, sep=';')
+            df['region_id'] = in_region_id
 
-                    df = df.set_index('region_id')
-                    df = df.drop('doc_id', axis=1)
+            df = df.set_index('region_id')
+            df = df.drop('doc_id', axis=1)
 
-                    frames.append(df)
+            frames.append(df)
 
-                    gt_file.close()
-                    in_file.close()
+            gt_file.close()
+            in_file.close()
 
     return pd.concat(frames).transpose().to_dict()
 

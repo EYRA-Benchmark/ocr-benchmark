@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!python
 
 import difflib
 import io
@@ -23,6 +23,7 @@ PIXEL_MATCH_THRESHOLD = 10
 # Do not log so much with cwltool
 cwltool.loghandler._logger.setLevel(logging.WARN)
 
+
 def process_single(gt_file, in_file):
     overall_report = {}
     # writeableOutputFile = open(outputfile,"w+")
@@ -41,15 +42,8 @@ def process_single(gt_file, in_file):
                                            matches_for_text_processing)
     overall_report['textregion_report'] = textregion_report
 
-    # processLayout(gtXML, inXML)
-
-    # contents_groundtruth = readableGroundtruthFile.readlines()
-    # contents_input = readableInputFile.readlines()
-
-    # readableGroundtruthFile.close()
-    # readableInputFile.close()
-
     return overall_report
+
 
 @click.command()
 @click.argument('gt_file', type=click.File(encoding='utf-8'))
@@ -151,9 +145,11 @@ def processTextregions(gtXML, inXML, matches_for_text_processing):
             data = result['global_data']['contents']
             reader = io.StringIO(data)
 
+            # Extract result from csv file
             df = pd.read_csv(reader, sep=';')
             df['region_id'] = inTranslatedRegionName
 
+            # Manipulate the result into a nice frame
             df = df.set_index('region_id')
             df = df.drop('doc_id', axis=1)
 
@@ -162,7 +158,12 @@ def processTextregions(gtXML, inXML, matches_for_text_processing):
             gt_file.close()
             in_file.close()
 
-    return pd.concat(frames).transpose().to_dict()
+    df = pd.concat(frames)
+    mean = df.mean(axis=0)
+    report = df.transpose().to_dict()
+    report['mean'] = mean.to_dict()
+
+    return report
 
 
 def processBoundingboxes(gtXML, inXML):
@@ -215,17 +216,6 @@ def processBoundingboxes(gtXML, inXML):
     # Record the remaining entries
     boundingboxes_report['false_negatives'] = list(gtBounds_rest.keys())
     boundingboxes_report['false_positives'] = list(inBounds_rest.keys())
-
-    # for (gt_id, gt_box) in gtBounds_rest.items():
-    # end_report = end_report + 'Ground Truth "{gt_id}" did not match anything\n'.format(gt_id=gt_id)
-
-    # for in_id, in_box in inBounds_rest.items():
-    #     end_report = end_report + 'Input "{in_id}" did not match anything\n'.format(in_id=in_id)
-
-    # end_score = (score_single + score_merged) / len(gtPolygons)
-
-    # end_report = end_report + '\nFinal overall bounding box score: {end_score}'.format(end_score=end_score)
-    # print(boundingboxes_report)
 
     for match in boundingboxes_report['matches']:
         matches_for_text_processing[match] = boundingboxes_report['matches'][
@@ -309,22 +299,6 @@ def processLayout(gtXML, inXML):
             'Ground Truth "{gt_id}" did not match anything'.format(gt_id=gt_id))
 
 
-# def processLayout(gtXML, inXML):
-#     print('Textregions layout')
-
-#     gtPolygons = getPolygons(gtXML.PcGts.Page)
-#     inPolygons = getPolygons(inXML.PcGts.Page)
-
-#     multi_gt_polygons = MultiPolygon(gtPolygons)
-#     multi_in_polygons = MultiPolygon(inPolygons)
-
-#     try:
-#         jaccard_score = jaccard_index_multipolygons(multi_gt_polygons, multi_in_polygons)
-#         print('Layout jaccard_score: {jaccard_score}'.format(jaccard_score=jaccard_score))
-#     except:
-#         print('doe moeluk')
-
-
 def getPolygons(Page):
     polygons = []
     for TextRegion in Page.TextRegion:
@@ -346,16 +320,6 @@ def getTextregions(Page):
         textregions.append((TextRegion['id'], TextRegion))
 
     return textregions
-
-    # for TextRegion in gtXML.PcGts.Page.TextRegion:
-    #     print(TextRegion['id'])
-    #     for Point in TextRegion.Coords.Point:
-    #         print(Point['x'] + ' ' + Point['y'])
-
-    # for TextRegion in gtXML.PcGts.Page.TextRegion:
-    #     print(TextRegion['id'])
-    #     for Point in TextRegion.Coords.Point:
-    #         print(Point['x'] + ' ' + Point['y'])
 
 
 def jaccard_index_multipolygons(truth_multi, predicted_multi):

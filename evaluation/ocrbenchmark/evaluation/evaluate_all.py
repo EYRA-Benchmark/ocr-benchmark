@@ -51,8 +51,8 @@ def processall(gt_folder, in_folder):
             np.nanmean(textregion_scores['CER']),
             "WER":
             np.nanmean(textregion_scores['WER']),
-            "WER (order independent'":
-            np.nanmean(textregion_scores['WER (order independent'])
+            "WER (order independent)":
+            np.nanmean(textregion_scores['WER (order independent)'])
         },
     }
     print(json.dumps(output_dict))

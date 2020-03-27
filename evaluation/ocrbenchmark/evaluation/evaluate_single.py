@@ -244,14 +244,14 @@ def processBoundingboxes(gtXML, inXML):
     report['score_merged'] = score_merged
 
     # Record the remaining entries
-    boundingboxes_report['false_negatives'] = list(gtBounds_rest.keys())
-    boundingboxes_report['false_positives'] = list(inBounds_rest.keys())
+    report['false_negatives'] = list(gtBounds_rest.keys())
+    report['false_positives'] = list(inBounds_rest.keys())
 
-    for match in boundingboxes_report['matches']:
-        matches_for_text_processing[match] = boundingboxes_report['matches'][
+    for match in report['matches']:
+        matches_for_text_processing[match] = report['matches'][
             match]['id']
-    for match in boundingboxes_report['matches_merged']:
-        matches_for_text_processing[match] = boundingboxes_report[
+    for match in report['matches_merged']:
+        matches_for_text_processing[match] = report[
             'matches_merged'][match]['id']
 
     return matches_for_text_processing, report

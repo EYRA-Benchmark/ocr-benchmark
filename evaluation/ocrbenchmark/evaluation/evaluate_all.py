@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import click
-import statistics
+import numpy as np
 import json
 from glob import glob
 from os.path import basename
@@ -38,21 +38,21 @@ def processall(gt_folder, in_folder):
     textregion_scores['WER'] = [
         r['textregion_report']['mean']['WER'] for r in reports
     ]
-    textregion_scores['WER (order independent'] = [
-        r['textregion_report']['mean']['WER (order independent']
+    textregion_scores['WER (order independent)'] = [
+        r['textregion_report']['mean']['WER (order independent)']
         for r in reports
     ]
 
     output_dict = {
         "metrics": {
             "boundingbox_score":
-            statistics.mean(bbox_scores),
+            np.nanmean(bbox_scores),
             "CER":
-            statistics.mean(textregion_scores['CER']),
+            np.nanmean(textregion_scores['CER']),
             "WER":
-            statistics.mean(textregion_scores['WER']),
+            np.nanmean(textregion_scores['WER']),
             "WER (order independent'":
-            statistics.mean(textregion_scores['WER (order independent'])
+            np.nanmean(textregion_scores['WER (order independent'])
         },
     }
     print(json.dumps(output_dict))

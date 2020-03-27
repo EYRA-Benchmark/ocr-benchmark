@@ -30,17 +30,33 @@ def process_single(gt_file, in_file):
     gtXML = untangle.parse(gt_file)  #open(ground_truth_file,"r")
     inXML = untangle.parse(in_file)  #open(input_file,"r")
 
-    matches_for_text_processing, boundingboxes_report = processBoundingboxes(
-        gtXML, inXML)
-    overall_report['boundingboxes'] = boundingboxes_report
+    if (hasattr(gtXML, "PcGts") and hasattr(inXML, "PcGts")
+            and hasattr(gtXML.PcGts, "Page") and hasattr(inXML.PcGts, "Page")):
 
-    readingorder_report = processReadingorder(gtXML, inXML,
-                                              matches_for_text_processing)
-    overall_report['readingorder'] = readingorder_report
+        matches_for_text_processing, boundingboxes_report = processBoundingboxes(
+            gtXML, inXML)
+        overall_report['boundingboxes'] = boundingboxes_report
 
-    textregion_report = processTextregions(gtXML, inXML,
-                                           matches_for_text_processing)
-    overall_report['textregion_report'] = textregion_report
+        readingorder_report = processReadingorder(gtXML, inXML,
+                                                  matches_for_text_processing)
+        overall_report['readingorder'] = readingorder_report
+
+        textregion_report = processTextregions(gtXML, inXML,
+                                               matches_for_text_processing)
+        overall_report['textregion_report'] = textregion_report
+    else:
+        overall_report = {
+            'boundingboxes': {
+                'score': np.nan,
+                'merged_score': np.nan
+            },
+            'readingorder': "",
+            'textregion_report': {
+                'CER': np.nan,
+                'WER': np.nan,
+                'WER (order independent)': np.nan
+            },
+        }
 
     return overall_report
 
@@ -56,38 +72,43 @@ def processfile(gt_file, in_file):
 def processReadingorder(gtXML, inXML, matches_for_text_processing):
     report = {}
 
-    # Sort Reading orders by index
-    gtOrderedGroup = sorted(
-        gtXML.PcGts.Page.ReadingOrder.OrderedGroup.RegionRefIndexed,
-        key=lambda RegionRefIndexed: RegionRefIndexed['index'])
-    inOrderedGroup = sorted(
-        inXML.PcGts.Page.ReadingOrder.OrderedGroup.RegionRefIndexed,
-        key=lambda RegionRefIndexed: RegionRefIndexed['index'])
+    if (hasattr(gtXML.PcGts.Page, 'ReadingOrder')
+            and hasattr(inXML.PcGts.Page, 'ReadingOrder')):
+        # Sort Reading orders by index
+        gtOrderedGroup = sorted(
+            gtXML.PcGts.Page.ReadingOrder.OrderedGroup.RegionRefIndexed,
+            key=lambda RegionRefIndexed: RegionRefIndexed['index'])
+        inOrderedGroup = sorted(
+            inXML.PcGts.Page.ReadingOrder.OrderedGroup.RegionRefIndexed,
+            key=lambda RegionRefIndexed: RegionRefIndexed['index'])
 
-    # Read the reading order of the Ground truth file.
-    gtReadingOrder = []
-    for i in range(len(gtOrderedGroup)):
-        gtReadingOrder.append(gtOrderedGroup[i]['regionRef'])
+        # Read the reading order of the Ground truth file.
+        gtReadingOrder = []
+        for i in range(len(gtOrderedGroup)):
+            gtReadingOrder.append(gtOrderedGroup[i]['regionRef'])
 
-    # Translate to the names given in the input file with help of the matched bounding boxes.
-    inTranslatedReadingOrder = []
-    for match in gtReadingOrder:
-        if (match in matches_for_text_processing):
-            inTranslatedReadingOrder.append(matches_for_text_processing[match])
+        # Translate to the names given in the input file with help of the matched bounding boxes.
+        inTranslatedReadingOrder = []
+        for match in gtReadingOrder:
+            if (match in matches_for_text_processing):
+                inTranslatedReadingOrder.append(
+                    matches_for_text_processing[match])
 
-    # Read the reading order of the input file.
-    inReadingOrder = []
-    for i in range(len(inOrderedGroup)):
-        inReadingOrder.append(inOrderedGroup[i]['regionRef'])
+        # Read the reading order of the input file.
+        inReadingOrder = []
+        for i in range(len(inOrderedGroup)):
+            inReadingOrder.append(inOrderedGroup[i]['regionRef'])
 
-    # Compare using difflib
-    a = inTranslatedReadingOrder
-    b = inReadingOrder
+        # Compare using difflib
+        a = inTranslatedReadingOrder
+        b = inReadingOrder
 
-    s = difflib.SequenceMatcher(None, a, b)
-    for tag, i1, i2, j1, j2 in s.get_opcodes():
-        report = ("%7s a[%d:%d] (%s) b[%d:%d] (%s)" %
-                  (tag, i1, i2, a[i1:i2], j1, j2, b[j1:j2]))
+        s = difflib.SequenceMatcher(None, a, b)
+        for tag, i1, i2, j1, j2 in s.get_opcodes():
+            report = ("%7s a[%d:%d] (%s) b[%d:%d] (%s)" %
+                      (tag, i1, i2, a[i1:i2], j1, j2, b[j1:j2]))
+    else:
+        report = ""
 
     return report
 
@@ -158,10 +179,19 @@ def processTextregions(gtXML, inXML, matches_for_text_processing):
             gt_file.close()
             in_file.close()
 
-    df = pd.concat(frames)
-    mean = df.mean(axis=0)
-    report = df.transpose().to_dict()
-    report['mean'] = mean.to_dict()
+    if len(frames) > 0:
+        df = pd.concat(frames)
+        mean = df.mean(axis=0)
+        report = df.transpose().to_dict()
+        report['mean'] = mean.to_dict()
+    else:
+        report = {
+            'mean': {
+                'CER': np.nan,
+                'WER': np.nan,
+                'WER (order independent)': np.nan
+            }
+        }
 
     return report
 
@@ -190,8 +220,8 @@ def processBoundingboxes(gtXML, inXML):
     # All things that are left in the input might (in combination) match with items in the ground truth, so we create unions where the
     # boundaries are within a threshold value on one border and follow one another in the Y direction (aka are underneath eachother),
     # these are 'merged' matches.
-    for in_id_a, in_box_a in inBounds.items():
-        for in_id_b, in_box_b in inBounds.items():
+    for in_id_a, in_box_a in gtBounds_copy.items():
+        for in_id_b, in_box_b in inBounds_copy.items():
             if in_id_a != in_id_b:
                 (minx_a, miny_a, maxx_a, maxy_a) = in_box_a.bounds
                 (minx_b, miny_b, maxx_b, maxy_b) = in_box_b.bounds
@@ -260,8 +290,6 @@ def matchPolygonsAndRemove(gtBounds, inBounds):
 
 
 def processLayout(gtXML, inXML):
-    print('Layout')
-
     gtPolygons = getPolygons(gtXML.PcGts.Page)
     inPolygons = getPolygons(inXML.PcGts.Page)
 
@@ -301,23 +329,25 @@ def processLayout(gtXML, inXML):
 
 def getPolygons(Page):
     polygons = []
-    for TextRegion in Page.TextRegion:
-        pointslist = []
-        for Point in TextRegion.Coords.Point:
-            x = int(Point['x'])
-            y = int(Point['y'])
-            pointslist.append((x, y))
+    if hasattr(Page, 'TextRegion'):
+        for TextRegion in Page.TextRegion:
+            pointslist = []
+            for Point in TextRegion.Coords.Point:
+                x = int(Point['x'])
+                y = int(Point['y'])
+                pointslist.append((x, y))
 
-        polygon = Polygon(pointslist)
-        polygons.append((TextRegion['id'], polygon))
+            polygon = Polygon(pointslist)
+            polygons.append((TextRegion['id'], polygon))
 
     return polygons
 
 
 def getTextregions(Page):
     textregions = []
-    for TextRegion in Page.TextRegion:
-        textregions.append((TextRegion['id'], TextRegion))
+    if hasattr(Page, 'TextRegion'):
+        for TextRegion in Page.TextRegion:
+            textregions.append((TextRegion['id'], TextRegion))
 
     return textregions
 

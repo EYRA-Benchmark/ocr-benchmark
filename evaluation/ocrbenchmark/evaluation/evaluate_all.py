@@ -25,21 +25,21 @@ def processall(gt_folder, in_folder):
         for f in filenames
     ]
     # Aggregate boundingbox scores
-    bbox_scores = [r['boundingboxes']['score'] for r in reports]
+    bbox_scores = [r['boundingboxes']['mean'] for r in reports]
     bbox_scores = bbox_scores + [
-        r['boundingboxes']['score_merged'] for r in reports
+        r['boundingboxes']['mean_merged'] for r in reports
     ]
 
     # Aggregate textregion scores
     textregion_scores = {}
     textregion_scores['CER'] = [
-        r['textregion_report']['mean']['CER'] for r in reports
+        r['textregions']['mean']['CER'] for r in reports
     ]
     textregion_scores['WER'] = [
-        r['textregion_report']['mean']['WER'] for r in reports
+        r['textregions']['mean']['WER'] for r in reports
     ]
     textregion_scores['WER (order independent)'] = [
-        r['textregion_report']['mean']['WER (order independent)']
+        r['textregions']['mean']['WER (order independent)']
         for r in reports
     ]
 

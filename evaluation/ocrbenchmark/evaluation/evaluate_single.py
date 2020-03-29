@@ -1,4 +1,4 @@
-#!python
+#!/usr/bin/env python
 
 import difflib
 import io
@@ -25,6 +25,7 @@ cwltool.loghandler._logger.setLevel(logging.WARN)
 
 
 def process_single(gt_file, in_file):
+    print("processing ${gt_file} and ${in_file}".format(gt_file=gt_file, in_file=in_file))
     overall_report = {}
     # writeableOutputFile = open(outputfile,"w+")
     gtXML = untangle.parse(gt_file)  # open(ground_truth_file,"r")
@@ -43,20 +44,24 @@ def process_single(gt_file, in_file):
 
         textregion_report = processTextregions(gtXML, inXML,
                                                matches_for_text_processing)
-        overall_report['textregion_report'] = textregion_report
+        overall_report['textregions'] = textregion_report
     else:
         overall_report = {
             'boundingboxes': {
-                'score': np.nan,
-                'merged_score': np.nan
+                'mean': np.nan,
+                'mean_merged': np.nan,
+                'nr_false_positives': np.nan,
+                'nr_false_negatives': np.nan
             },
             'readingorder': "",
-            'textregion_report': {
+            'textregions': {
                 'CER': np.nan,
                 'WER': np.nan,
                 'WER (order independent)': np.nan
             },
         }
+
+    print(overall_report)
 
     return overall_report
 
@@ -73,7 +78,9 @@ def processReadingorder(gtXML, inXML, matches_for_text_processing):
     report = {}
 
     if (hasattr(gtXML.PcGts.Page, 'ReadingOrder')
-            and hasattr(inXML.PcGts.Page, 'ReadingOrder')):
+            and hasattr(inXML.PcGts.Page, 'ReadingOrder')
+            and hasattr(gtXML.PcGts.Page.ReadingOrder, 'OrderedGroup')
+            and hasattr(inXML.PcGts.Page.ReadingOrder, 'OrderedGroup')):
         # Sort Reading orders by index
         gtOrderedGroup = sorted(
             gtXML.PcGts.Page.ReadingOrder.OrderedGroup.RegionRefIndexed,
@@ -213,10 +220,10 @@ def processBoundingboxes(gtXML, inXML):
         inBounds[tr_id] = box(*polygon.bounds)
 
     # Search for and get all of the direct matches. gtBounds_copy and inBounds_copy will house the remaining entries only.
-    gtBounds_copy, inBounds_copy, matches, score_single = matchPolygonsAndRemove(
+    gtBounds_copy, inBounds_copy, matches_singles, score_singles = matchPolygonsAndRemove(
         gtBounds, inBounds)
-    report['matches'] = matches
-    report['score'] = score_single
+    report['matches'] = matches_singles
+    report['mean'] = score_singles
 
     # All things that are left in the input might (in combination) match with items in the ground truth, so we create unions where the
     # boundaries are within a threshold value on one border and follow one another in the Y direction (aka are underneath eachother),
@@ -241,31 +248,29 @@ def processBoundingboxes(gtXML, inXML):
     # gtBounds_rest and inBounds_rest will house the remaining entries only.
     gtBounds_rest, inBounds_rest, matches_merged, score_merged = matchPolygonsAndRemove(gtBounds_copy, inBounds_copy)
     report['matches_merged'] = matches_merged
-    report['score_merged'] = score_merged
+    report['mean_merged'] = score_merged
 
     # Record the remaining entries
     report['false_negatives'] = list(gtBounds_rest.keys())
     report['false_positives'] = list(inBounds_rest.keys())
 
     for match in report['matches']:
-        matches_for_text_processing[match] = report['matches'][
-            match]['id']
+        matches_for_text_processing[match] = report['matches'][match]['id']
     for match in report['matches_merged']:
-        matches_for_text_processing[match] = report[
-            'matches_merged'][match]['id']
+        matches_for_text_processing[match] = report['matches_merged'][match]['id']
 
     return matches_for_text_processing, report
 
 
 def matchPolygonsAndRemove(gtBounds, inBounds):
     matches = {}
-    scored_items = 0
+    final_scores = []
 
     gtBounds_copy = deepcopy(gtBounds)
     inBounds_copy = deepcopy(inBounds)
-    score = 0
-    for gt_id, gt_box in gtBounds.items():
-        scores = []
+
+    for gt_id, gt_box in gtBounds.items(): 
+        scores = []       
         for _, in_box in inBounds.items():
             score = jaccard_index_multipolygons(gt_box, in_box)
             scores.append(score)
@@ -279,14 +284,13 @@ def matchPolygonsAndRemove(gtBounds, inBounds):
             del gtBounds_copy[gt_id]
 
             matches[gt_id] = {'id': match_id, 'score': scores[max_index]}
+            final_scores.append(scores[max_index])
 
-            score = score + scores[max_index]
-            scored_items += 1
+    final_score = np.average(final_scores)
+    # if (len(matches) > 0):
+    #     final_score = np.sum(scores) / len(matches)
 
-    if (scored_items > 0):
-        score = score / scored_items
-
-    return (gtBounds_copy, inBounds_copy, matches, score)
+    return (gtBounds_copy, inBounds_copy, matches, final_score)
 
 
 def processLayout(gtXML, inXML):
